@@ -53,20 +53,6 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-        .badge {
-            background: rgba(30, 41, 59, 0.6);
-            backdrop-filter: blur(8px);
-            padding: 6px 14px;
-            border-radius: 40px;
-            font-size: 12px;
-            font-weight: 600;
-            color: #3b82f6;
-            border: 1px solid var(--glass-border);
-            box-shadow: 0 0 12px var(--glow-color);
-            cursor: pointer;
-            transition: 0.2s ease;
-        }
-        .badge:hover { background: #1e293b; color: #60a5fa; }
         
         /* Buttons */
         .btn-primary {
@@ -87,6 +73,24 @@
         .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3); }
         .btn-primary:active { transform: translateY(0); }
         
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            border: 1px solid #f87171;
+            color: white;
+            padding: 6px 16px;
+            border-radius: 40px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: 0.2s;
+            border: none;
+        }
+        .btn-danger:hover { opacity: 0.9; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3); }
+        .btn-danger:active { transform: translateY(0); }
+        
         .btn-secondary {
             background: rgba(30, 41, 59, 0.6);
             border: 1px solid var(--glass-border);
@@ -99,6 +103,23 @@
             transition: 0.2s;
         }
         .btn-secondary:hover { background: #1e293b; color: #e2e8f0; }
+        .btn-icon {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #f87171;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
+            margin-left: 6px;
+        }
+        .btn-icon:hover { background: rgba(239, 68, 68, 0.4); transform: scale(1.1); }
+        .btn-icon:active { transform: scale(0.9); }
 
         /* Cards */
         .card {
@@ -249,9 +270,51 @@
             padding: 10px 8px;
             border-radius: 14px;
             border: 1px solid var(--glass-border);
+            position: relative;
         }
         .mmr-item .tier-lbl { font-size: 10px; color: #64748b; text-transform: uppercase; font-weight: 700; margin-bottom: 2px;}
         .mmr-item .val { font-weight: 700; font-size: 15px; color: #f1f5f9; }
+        .mmr-item .delete-mmr {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            background: rgba(239, 68, 68, 0.9);
+            color: white;
+            border: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
+        }
+        .mmr-item .delete-mmr:hover { transform: scale(1.2); background: #dc2626; }
+        
+        /* Transaction History */
+        .tx-history {
+            margin: 12px 0;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .tx-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: rgba(15, 26, 43, 0.3);
+            border-radius: 10px;
+            margin-bottom: 4px;
+            border: 1px solid var(--glass-border);
+        }
+        .tx-item .tx-info { display: flex; flex-direction: column; gap: 2px; }
+        .tx-item .tx-info .tx-memo { font-size: 12px; color: #94a3b8; }
+        .tx-item .tx-info .tx-account { font-size: 10px; color: #64748b; }
+        .tx-item .tx-amount { font-weight: 600; }
+        .tx-item .tx-amount.inflow { color: #4ade80; }
+        .tx-item .tx-amount.outflow { color: #f87171; }
         
         /* Forecast */
         .forecast-grid {
@@ -406,7 +469,7 @@
         .radio-btn.selected[data-type="inflow"] { background: rgba(74, 222, 128, 0.15); border-color: #4ade80; color: #4ade80; }
         .radio-btn.selected[data-type="outflow"] { background: rgba(248, 113, 113, 0.15); border-color: #f87171; color: #f87171; }
         
-        .modal-actions { display: grid; grid-template-columns: 1fr 2fr; gap: 10px; margin-top: 24px; }
+        .modal-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 24px; }
         .btn-close-modal {
             background: transparent;
             border: 1px solid var(--glass-border);
@@ -429,6 +492,8 @@
             transition: 0.2s;
         }
         .btn-submit:hover { background: #2563eb; }
+        .btn-submit.danger { background: #ef4444; }
+        .btn-submit.danger:hover { background: #dc2626; }
         
         .footer-meta {
             text-align: center;
@@ -439,7 +504,11 @@
         }
         .footer-meta span { color: #334155; }
         
-        /* Responsive */
+        /* Scrollbar */
+        .tx-history::-webkit-scrollbar { width: 4px; }
+        .tx-history::-webkit-scrollbar-track { background: rgba(15, 26, 43, 0.3); border-radius: 10px; }
+        .tx-history::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 10px; }
+        
         @media (max-width: 400px) {
             .grid-2 { gap: 8px; }
             .card-value { font-size: 18px; }
@@ -455,7 +524,10 @@
     <!-- Header -->
     <div class="header">
         <span class="logo">◆ FinSight Pro</span>
-        <button class="btn-primary" onclick="toggleModal(true)">➕ Add Data</button>
+        <div style="display:flex;gap:8px;">
+            <button class="btn-primary" onclick="toggleModal(true)">➕ Add</button>
+            <button class="btn-danger" onclick="clearAllData()">🗑️ Clear</button>
+        </div>
     </div>
 
     <!-- AI Insight -->
@@ -508,12 +580,24 @@
     <div style="margin-bottom:12px;">
         <div class="flex-between">
             <span class="card-label">Accounts</span>
-            <span style="font-size:11px;color:#64748b;text-transform: uppercase; font-weight:600;">Distribution</span>
+            <div style="display:flex;gap:4px;">
+                <span style="font-size:11px;color:#64748b;text-transform: uppercase; font-weight:600;">Distribution</span>
+                <button class="btn-icon" onclick="deleteAccount()" title="Delete selected account">✕</button>
+            </div>
         </div>
         <div class="account-row" id="accountList"></div>
     </div>
 
     <hr class="divider" />
+
+    <!-- Transaction History -->
+    <div style="margin:12px 0;">
+        <div class="flex-between">
+            <span class="card-label">📋 Transaction History</span>
+            <button class="btn-icon" onclick="clearTransactions()" title="Clear all transactions">✕</button>
+        </div>
+        <div class="tx-history" id="txHistory"></div>
+    </div>
 
     <!-- Forecast -->
     <div style="background:rgba(15, 26, 43, 0.4);border-radius:20px;padding:14px;border:1px solid var(--glass-border);">
@@ -566,7 +650,10 @@
 
     <!-- MRR -->
     <div style="margin:16px 0 4px;">
-        <span class="card-label">📊 MRR Tiers</span>
+        <div class="flex-between">
+            <span class="card-label">📊 MRR Tiers</span>
+            <button class="btn-icon" onclick="deleteMRR()" title="Delete selected MRR tier">✕</button>
+        </div>
     </div>
     <div class="mmr-box" id="mrrGrid"></div>
 
@@ -580,7 +667,7 @@
 
     <div class="footer-meta">
         FinSight Pro · Real-time Operational Node<br>
-        <span>All dynamic fields sync with local state</span>
+        <span>Click ✕ to delete items · All data auto-saves</span>
     </div>
 </div>
 
@@ -619,6 +706,18 @@
     </div>
 </div>
 
+<!-- Delete Confirmation Modal -->
+<div class="modal-overlay" id="deleteModal">
+    <div class="modal-content">
+        <div class="modal-title">⚠️ Confirm Delete</div>
+        <p style="color:#94a3b8; margin-bottom:20px; font-size:14px;" id="deleteMsg">Are you sure you want to delete this item?</p>
+        <div class="modal-actions">
+            <button class="btn-close-modal" onclick="closeDeleteModal()">Cancel</button>
+            <button class="btn-submit danger" id="confirmDeleteBtn" onclick="confirmDelete()">Delete</button>
+        </div>
+    </div>
+</div>
+
 <!-- Toast -->
 <div class="toast" id="toast"></div>
 
@@ -645,6 +744,7 @@ const state = {
         { name: 'PayPal Transit', balance: 198200 },
         { name: 'Local Ledger', balance: 101240 }
     ],
+    transactions: [],
     forecast: [
         { week: 1, amount: 142000 },
         { week: 2, amount: 89000 },
@@ -655,19 +755,21 @@ const state = {
         { tier: 'Starter', total: 120500 },
         { tier: 'Growth', total: 245000 },
         { tier: 'Enterprise', total: 90270 }
-    ]
+    ],
+    deleteTarget: null,
+    deleteType: null
 };
 
 // ============================================================
 // PERSISTENCE
 // ============================================================
 function saveState() {
-    try { localStorage.setItem('finsight_pro_v4', JSON.stringify(state)); } catch(e) {}
+    try { localStorage.setItem('finsight_pro_v5', JSON.stringify(state)); } catch(e) {}
 }
 
 function loadState() {
     try {
-        const saved = localStorage.getItem('finsight_pro_v4');
+        const saved = localStorage.getItem('finsight_pro_v5');
         if (saved) {
             Object.assign(state, JSON.parse(saved));
             return true;
@@ -699,6 +801,7 @@ function calculateFinancialMetrics() {
 function generateAIInsight() {
     const margin = state.income - state.outcome;
     const net = state.balance;
+    const txCount = state.transactions.length;
     
     if (margin < 0) {
         return `⚠️ Negative net margin of KSh ${Math.abs(Math.round(margin)).toLocaleString()}. Runway at ${state.monthsLeft} months. Consider cost optimization or revenue acceleration.`;
@@ -712,7 +815,155 @@ function generateAIInsight() {
         return `⚠️ Runway below 6 months (${state.monthsLeft}). Urgent capital injection or expense reduction needed.`;
     }
     
-    return `✅ Healthy runway of ${state.monthsLeft} months. Income exceeds outcome by KSh ${Math.round(margin).toLocaleString()}. Growth at ${state.growthRate.toFixed(1)}% MoM.`;
+    let insight = `✅ Healthy runway of ${state.monthsLeft} months. Income exceeds outcome by KSh ${Math.round(margin).toLocaleString()}. Growth at ${state.growthRate.toFixed(1)}% MoM.`;
+    
+    if (txCount > 0) {
+        insight += ` Last ${txCount} transactions logged.`;
+    }
+    
+    return insight;
+}
+
+// ============================================================
+// DELETE LOGIC
+// ============================================================
+function showDeleteModal(message, target, type) {
+    state.deleteTarget = target;
+    state.deleteType = type;
+    document.getElementById('deleteMsg').textContent = message;
+    document.getElementById('deleteModal').classList.add('active');
+}
+
+function closeDeleteModal() {
+    document.getElementById('deleteModal').classList.remove('active');
+    state.deleteTarget = null;
+    state.deleteType = null;
+}
+
+function confirmDelete() {
+    if (state.deleteType === 'account') {
+        deleteAccountConfirm(state.deleteTarget);
+    } else if (state.deleteType === 'transaction') {
+        deleteTransactionConfirm(state.deleteTarget);
+    } else if (state.deleteType === 'mrr') {
+        deleteMRRConfirm(state.deleteTarget);
+    }
+    closeDeleteModal();
+}
+
+// Account Delete
+function deleteAccount() {
+    if (state.accounts.length <= 1) {
+        showToast('❌ Cannot delete last account');
+        return;
+    }
+    // Show account selection
+    const names = state.accounts.map((a, i) => `${i+1}. ${a.name}`).join('\n');
+    const choice = prompt(`Select account to delete (enter number):\n${names}`);
+    if (choice) {
+        const idx = parseInt(choice) - 1;
+        if (idx >= 0 && idx < state.accounts.length) {
+            showDeleteModal(`Delete account "${state.accounts[idx].name}"? This will remove it and all its balance.`, idx, 'account');
+        } else {
+            showToast('❌ Invalid selection');
+        }
+    }
+}
+
+function deleteAccountConfirm(idx) {
+    const removed = state.accounts.splice(idx, 1)[0];
+    calculateFinancialMetrics();
+    saveState();
+    updateUI();
+    showToast(`🗑️ Deleted account: ${removed.name}`);
+}
+
+// Transaction Delete
+function deleteTransaction(index) {
+    showDeleteModal(`Delete transaction "${state.transactions[index].memo}"?`, index, 'transaction');
+}
+
+function deleteTransactionConfirm(index) {
+    const tx = state.transactions.splice(index, 1)[0];
+    // Reverse the transaction effect
+    if (tx.type === 'inflow') {
+        state.income -= tx.amount;
+        state.ebitda -= Math.round(tx.amount * 0.75);
+        // Find and update account
+        const acc = state.accounts.find(a => a.name === tx.account);
+        if (acc) acc.balance -= tx.amount;
+    } else {
+        state.outcome -= tx.amount;
+        state.ebitda += Math.round(tx.amount * 0.85);
+        const acc = state.accounts.find(a => a.name === tx.account);
+        if (acc) acc.balance += tx.amount;
+    }
+    calculateFinancialMetrics();
+    saveState();
+    updateUI();
+    showToast(`🗑️ Deleted transaction: ${tx.memo}`);
+}
+
+// Clear all transactions
+function clearTransactions() {
+    if (state.transactions.length === 0) {
+        showToast('No transactions to clear');
+        return;
+    }
+    if (confirm(`Delete all ${state.transactions.length} transactions? This cannot be undone.`)) {
+        // Reverse all transactions
+        state.transactions.forEach(tx => {
+            if (tx.type === 'inflow') {
+                state.income -= tx.amount;
+                const acc = state.accounts.find(a => a.name === tx.account);
+                if (acc) acc.balance -= tx.amount;
+            } else {
+                state.outcome -= tx.amount;
+                const acc = state.accounts.find(a => a.name === tx.account);
+                if (acc) acc.balance += tx.amount;
+            }
+        });
+        state.transactions = [];
+        calculateFinancialMetrics();
+        saveState();
+        updateUI();
+        showToast('🗑️ All transactions cleared');
+    }
+}
+
+// MRR Delete
+function deleteMRR() {
+    if (state.mrrTiers.length <= 1) {
+        showToast('❌ Cannot delete last MRR tier');
+        return;
+    }
+    const names = state.mrrTiers.map((t, i) => `${i+1}. ${t.tier} (KSh ${t.total.toLocaleString()})`).join('\n');
+    const choice = prompt(`Select MRR tier to delete (enter number):\n${names}`);
+    if (choice) {
+        const idx = parseInt(choice) - 1;
+        if (idx >= 0 && idx < state.mrrTiers.length) {
+            showDeleteModal(`Delete MRR tier "${state.mrrTiers[idx].tier}"?`, idx, 'mrr');
+        } else {
+            showToast('❌ Invalid selection');
+        }
+    }
+}
+
+function deleteMRRConfirm(idx) {
+    const removed = state.mrrTiers.splice(idx, 1)[0];
+    saveState();
+    updateUI();
+    showToast(`🗑️ Deleted MRR tier: ${removed.tier}`);
+}
+
+// Clear all data
+function clearAllData() {
+    if (confirm('⚠️ Delete ALL data? This will reset the entire app. This cannot be undone!')) {
+        if (confirm('Are you absolutely sure?')) {
+            localStorage.removeItem('finsight_pro_v5');
+            location.reload();
+        }
+    }
 }
 
 // ============================================================
@@ -761,6 +1012,15 @@ function submitTransaction() {
         return;
     }
 
+    const tx = {
+        id: Date.now(),
+        type: state.currentTxType,
+        amount: val,
+        account: state.accounts[accIdx].name,
+        memo: description,
+        timestamp: new Date().toLocaleString()
+    };
+
     if (state.currentTxType === 'inflow') {
         state.accounts[accIdx].balance += val;
         state.income += val;
@@ -770,6 +1030,8 @@ function submitTransaction() {
         state.outcome += val;
         state.ebitda -= Math.round(val * 0.85);
     }
+
+    state.transactions.unshift(tx);
 
     // Update MRR tiers based on inflow
     if (state.currentTxType === 'inflow' && val > 10000) {
@@ -840,6 +1102,14 @@ function quickTransfer(target, defaultAmount) {
     if (state.accounts[0].balance >= amount) {
         state.accounts[0].balance -= amount;
         state.outcome += amount;
+        state.transactions.unshift({
+            id: Date.now(),
+            type: 'outflow',
+            amount: amount,
+            account: state.accounts[0].name,
+            memo: `Transfer to ${target}`,
+            timestamp: new Date().toLocaleString()
+        });
         calculateFinancialMetrics();
         saveState();
         updateUI();
@@ -867,20 +1137,47 @@ function updateUI() {
     // Accounts
     const accountContainer = document.getElementById('accountList');
     accountContainer.innerHTML = '';
-    state.accounts.forEach(acc => {
+    state.accounts.forEach((acc, idx) => {
         const chip = document.createElement('span');
         chip.className = 'account-chip';
         chip.innerHTML = `🏦 ${acc.name} <span class="bal">KSh ${Math.round(acc.balance).toLocaleString()}</span>`;
         accountContainer.appendChild(chip);
     });
 
+    // Transactions
+    const txContainer = document.getElementById('txHistory');
+    txContainer.innerHTML = '';
+    if (state.transactions.length === 0) {
+        txContainer.innerHTML = '<div style="text-align:center;color:#475569;padding:12px;font-size:13px;">No transactions logged yet</div>';
+    } else {
+        state.transactions.slice(0, 20).forEach((tx, idx) => {
+            const div = document.createElement('div');
+            div.className = 'tx-item';
+            div.innerHTML = `
+                <div class="tx-info">
+                    <span style="font-size:13px;font-weight:500;">${tx.memo}</span>
+                    <span class="tx-account">${tx.account} · ${tx.timestamp}</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <span class="tx-amount ${tx.type}">${tx.type === 'inflow' ? '+' : '-'} KSh ${Math.round(tx.amount).toLocaleString()}</span>
+                    <button class="btn-icon" onclick="deleteTransaction(${idx})" style="width:20px;height:20px;font-size:10px;">✕</button>
+                </div>
+            `;
+            txContainer.appendChild(div);
+        });
+    }
+
     // MRR
     const mrrContainer = document.getElementById('mrrGrid');
     mrrContainer.innerHTML = '';
-    state.mrrTiers.forEach(tier => {
+    state.mrrTiers.forEach((tier, idx) => {
         const item = document.createElement('div');
         item.className = 'mmr-item';
-        item.innerHTML = `<div class="tier-lbl">${tier.tier}</div><div class="val">KSh ${Math.round(tier.total).toLocaleString()}</div>`;
+        item.innerHTML = `
+            <div class="tier-lbl">${tier.tier}</div>
+            <div class="val">KSh ${Math.round(tier.total).toLocaleString()}</div>
+            <button class="delete-mmr" onclick="deleteMRR()" title="Delete this tier">✕</button>
+        `;
         mrrContainer.appendChild(item);
     });
 
@@ -938,6 +1235,12 @@ function autoRefresh() {
 // INIT
 // ============================================================
 if (!loadState()) {
+    // Add some sample transactions
+    state.transactions = [
+        { id: 1, type: 'inflow', amount: 150000, account: 'M-Pesa B2C', memo: 'Client Payment - Invoice #123', timestamp: '2024-01-15 10:30' },
+        { id: 2, type: 'outflow', amount: 45000, account: 'KCB Corporate', memo: 'Vendor Payment - Supplies', timestamp: '2024-01-14 14:20' },
+        { id: 3, type: 'inflow', amount: 75000, account: 'PayPal Transit', memo: 'Subscription Revenue - Q1', timestamp: '2024-01-13 09:15' }
+    ];
     calculateFinancialMetrics();
 }
 updateUI();
@@ -958,7 +1261,7 @@ if ('serviceWorker' in navigator) {
     `)).catch(() => {});
 }
 
-console.log('🧠 FinSight Pro v4 · Ultra Logic Engine Active');
+console.log('🧠 FinSight Pro v5 · Ultra Logic Engine with Delete Logic');
 console.log('📊 Current State:', state);
 </script>
 </body>
