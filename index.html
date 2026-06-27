@@ -9,6 +9,16 @@
     <link rel="manifest" href="data:application/json,{"name":"FinSight Pro","short_name":"FinSight","start_url":".","display":"standalone","background_color":"#0f172a","theme_color":"#0f172a","icons":[{"src":"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%233b82f6'/%3E%3Ctext x='50' y='68' font-size='52' text-anchor='middle' fill='white' font-family='sans-serif'%3E%26%23x20B9;%3C/text%3E%3C/svg%3E","sizes":"192x192","type":"image/svg+xml"}]}" />
     <title>FinSight Pro · AI SaaS</title>
     <style>
+        :root {
+            --glass-bg: rgba(19, 30, 47, 0.7);
+            --glass-border: rgba(51, 65, 85, 0.4);
+            --glow-color: rgba(59, 130, 246, 0.15);
+            --primary: #3b82f6;
+            --primary-dark: #2563eb;
+            --success: #4ade80;
+            --danger: #f87171;
+            --warning: #fbbf24;
+        }
         * {
             margin: 0;
             padding: 0;
@@ -16,15 +26,19 @@
             font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
         }
         body {
-            background: #0b1120;
+            background: #070b14;
+            background-image: radial-gradient(circle at 50% 0%, #101b30 0%, #070b14 70%);
             color: #e2e8f0;
             padding: 16px 12px 100px;
             min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
         }
         .app {
             max-width: 480px;
             margin: 0 auto;
         }
+        
+        /* Header */
         .header {
             display: flex;
             justify-content: space-between;
@@ -32,32 +46,69 @@
             padding: 8px 0 20px;
         }
         .logo {
-            font-weight: 700;
-            font-size: 22px;
-            letter-spacing: -0.5px;
+            font-weight: 800;
+            font-size: 24px;
+            letter-spacing: -0.75px;
             background: linear-gradient(135deg, #60a5fa, #a78bfa, #f472b6);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
         .badge {
-            background: #1e293b;
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(8px);
             padding: 6px 14px;
             border-radius: 40px;
             font-size: 12px;
-            font-weight: 500;
+            font-weight: 600;
+            color: #3b82f6;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 0 12px var(--glow-color);
+            cursor: pointer;
+            transition: 0.2s ease;
+        }
+        .badge:hover { background: #1e293b; color: #60a5fa; }
+        
+        /* Buttons */
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            border: 1px solid #60a5fa;
+            color: white;
+            padding: 6px 16px;
+            border-radius: 40px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: 0.2s;
+            border: none;
+        }
+        .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3); }
+        .btn-primary:active { transform: translateY(0); }
+        
+        .btn-secondary {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid var(--glass-border);
             color: #94a3b8;
-            border: 1px solid #334155;
+            padding: 6px 14px;
+            border-radius: 40px;
+            font-size: 12px;
+            font-weight: 600;
             cursor: pointer;
             transition: 0.2s;
         }
-        .badge:hover { background: #2a3a4a; }
+        .btn-secondary:hover { background: #1e293b; color: #e2e8f0; }
+
+        /* Cards */
         .card {
-            background: #131e2f;
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
             border-radius: 20px;
-            padding: 16px 14px;
-            border: 1px solid #1e2a3a;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            transition: 0.2s;
+            padding: 18px 16px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s;
         }
         .card:active { transform: scale(0.98); }
         .grid-2 {
@@ -69,80 +120,82 @@
         .card-label {
             font-size: 11px;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.75px;
             color: #64748b;
-            font-weight: 600;
+            font-weight: 700;
         }
         .card-value {
             font-size: 22px;
             font-weight: 700;
             margin-top: 4px;
-            letter-spacing: -0.3px;
+            letter-spacing: -0.5px;
+            color: #f8fafc;
         }
         .card-change {
-            font-size: 12px;
-            font-weight: 500;
+            font-size: 11px;
+            font-weight: 600;
             margin-top: 6px;
-            display: inline-block;
-            padding: 2px 10px;
+            display: inline-flex;
+            align-items: center;
+            padding: 3px 8px;
             border-radius: 40px;
-            background: #1a2a3a;
-            cursor: pointer;
+            background: rgba(30, 41, 59, 0.4);
         }
         .positive { color: #4ade80; }
         .negative { color: #f87171; }
-        .neutral { color: #94a3b8; }
-        .big-number { font-size: 30px; font-weight: 800; }
-        .sub-text { font-size: 13px; color: #94a3b8; margin-top: 2px; }
+        .big-number { font-size: 32px; font-weight: 800; letter-spacing: -1px; }
         .divider {
             border: none;
-            border-top: 1px solid #1e2a3a;
+            border-top: 1px solid rgba(51, 65, 85, 0.3);
             margin: 18px 0;
         }
+        
+        /* Accounts */
         .account-row {
             display: flex;
             flex-wrap: wrap;
             gap: 8px;
-            margin-top: 6px;
+            margin-top: 8px;
         }
         .account-chip {
-            background: #0f1a2b;
+            background: rgba(15, 26, 43, 0.6);
             padding: 6px 14px;
             border-radius: 40px;
             font-size: 13px;
-            border: 1px solid #263340;
+            border: 1px solid var(--glass-border);
             display: flex;
             align-items: center;
             gap: 6px;
             cursor: pointer;
-            transition: 0.2s;
+            transition: all 0.2s;
         }
-        .account-chip:hover { background: #1a2a3f; }
+        .account-chip:hover { background: #1a2a3f; border-color: #3b82f6; }
         .account-chip .bal { font-weight: 600; color: #f1f5f9; }
-        .cf-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 10px 0;
-            border-bottom: 1px solid #1a2636;
-        }
-        .cf-row:last-child { border-bottom: none; }
-        .cf-label { color: #94a3b8; font-size: 14px; }
-        .cf-amount { font-weight: 600; }
+        
+        /* Risk Box */
         .risk-box {
-            background: #2a1a2a;
+            background: rgba(42, 26, 42, 0.6);
             border: 1px solid #7f1d1d;
-            border-radius: 14px;
-            padding: 14px;
+            border-radius: 16px;
+            padding: 14px 16px;
             margin: 12px 0;
             display: flex;
             justify-content: space-between;
             align-items: center;
             cursor: pointer;
-            transition: 0.2s;
+            transition: 0.2s ease;
         }
-        .risk-box:hover { background: #3a1a2a; }
-        .risk-box .label { color: #fca5a5; font-size: 13px; }
+        .risk-box:hover { background: rgba(58, 26, 42, 0.8); box-shadow: 0 0 16px rgba(239, 68, 68, 0.1); }
+        .risk-box .label { color: #fca5a5; font-size: 13px; font-weight: 500; }
         .risk-box .amount { color: #f87171; font-weight: 700; font-size: 20px; }
+        .risk-box.safe {
+            border-color: #1a3a2a;
+            background: rgba(26, 42, 26, 0.4);
+        }
+        .risk-box.safe .label { color: #86efac; }
+        .risk-box.safe .amount { color: #4ade80; }
+        
+        /* Shortcuts */
         .shortcut-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -150,185 +203,296 @@
             margin: 12px 0;
         }
         .shortcut-btn {
-            background: #1a2a3f;
-            border: 1px solid #2d3f56;
+            background: linear-gradient(135deg, #131e2f, #1a2a3f);
+            border: 1px solid var(--glass-border);
             border-radius: 16px;
-            padding: 14px 10px;
-            text-align: center;
+            padding: 14px 12px;
+            text-align: left;
             font-size: 13px;
-            font-weight: 500;
+            font-weight: 600;
             color: #cbd5e1;
-            transition: 0.15s;
+            transition: all 0.2s;
             cursor: pointer;
         }
-        .shortcut-btn:active { transform: scale(0.95); }
+        .shortcut-btn:hover { border-color: #3b82f6; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+        .shortcut-btn:active { transform: scale(0.96); }
         .shortcut-btn small {
             display: block;
-            font-weight: 400;
+            font-weight: 500;
             color: #64748b;
             font-size: 11px;
             margin-top: 4px;
         }
+        
+        /* Runway */
         .runway-box {
             display: flex;
             justify-content: space-between;
-            background: #0f1a2b;
+            align-items: center;
+            background: rgba(15, 26, 43, 0.5);
             border-radius: 16px;
             padding: 14px 16px;
-            border: 1px solid #263340;
+            border: 1px solid var(--glass-border);
             margin: 8px 0;
         }
+        
+        /* MRR */
         .mmr-box {
-            display: flex;
-            gap: 16px;
-            justify-content: center;
-            padding: 8px 0;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 8px 0;
         }
         .mmr-item {
             text-align: center;
-            background: #0f1a2b;
-            padding: 8px 16px;
-            border-radius: 40px;
-            border: 1px solid #263340;
-            min-width: 60px;
+            background: rgba(15, 26, 43, 0.5);
+            padding: 10px 8px;
+            border-radius: 14px;
+            border: 1px solid var(--glass-border);
         }
-        .mmr-item .val { font-weight: 700; font-size: 18px; }
-        .footer-meta {
-            text-align: center;
-            margin-top: 24px;
-            font-size: 11px;
-            color: #475569;
-        }
-        .toast {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #1e293b;
-            border: 1px solid #334155;
-            padding: 12px 24px;
-            border-radius: 40px;
-            font-size: 13px;
-            max-width: 90%;
-            text-align: center;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.6);
-            transition: 0.3s;
-            opacity: 0;
-            pointer-events: none;
-            z-index: 999;
-        }
-        .toast.show { opacity: 1; pointer-events: auto; }
-        .scenario-badge {
-            background: #1a2a3f;
-            padding: 4px 12px;
-            border-radius: 40px;
-            font-size: 11px;
-            color: #94a3b8;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .scenario-badge:hover { background: #2a3a4f; }
-        .scenario-badge.active {
-            background: #3b82f6;
-            color: white;
-        }
-        .flex-between { display: flex; justify-content: space-between; align-items: center; }
-        .mt-8 { margin-top: 8px; }
-        .mb-8 { margin-bottom: 8px; }
-        .gap-8 { gap: 8px; }
+        .mmr-item .tier-lbl { font-size: 10px; color: #64748b; text-transform: uppercase; font-weight: 700; margin-bottom: 2px;}
+        .mmr-item .val { font-weight: 700; font-size: 15px; color: #f1f5f9; }
+        
+        /* Forecast */
         .forecast-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 6px;
-            margin: 10px 0;
+            margin: 12px 0 8px;
         }
         .forecast-item {
-            background: #0f1a2b;
-            padding: 8px 4px;
-            border-radius: 10px;
+            background: rgba(7, 11, 20, 0.5);
+            padding: 10px 4px;
+            border-radius: 12px;
             text-align: center;
-            border: 1px solid #1a2636;
+            border: 1px solid rgba(51, 65, 85, 0.2);
         }
-        .forecast-item .week { font-size: 9px; color: #64748b; }
-        .forecast-item .amount { font-size: 13px; font-weight: 600; }
+        .forecast-item .week { font-size: 10px; color: #64748b; font-weight: 600; margin-bottom: 2px; }
+        .forecast-item .amount { font-size: 13px; font-weight: 700; }
+        
+        /* Progress Bar */
         .progress-bar {
             width: 100%;
             height: 6px;
-            background: #1a2a3a;
+            background: #1e293b;
             border-radius: 10px;
-            margin: 8px 0;
+            margin: 8px 0 4px;
             overflow: hidden;
         }
         .progress-bar .fill {
             height: 100%;
             border-radius: 10px;
-            transition: width 0.6s ease;
+            transition: width 0.5s ease-out;
         }
+        
+        /* AI Insight */
         .ai-insight {
-            background: linear-gradient(135deg, #1a2a3f, #0f1a2b);
+            background: linear-gradient(135deg, rgba(26, 42, 63, 0.4), rgba(15, 26, 43, 0.4));
             border: 1px solid #3b82f6;
-            border-radius: 14px;
+            border-radius: 16px;
             padding: 14px;
-            margin: 12px 0;
+            margin: 12px 0 16px;
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.08);
         }
-        .ai-insight .label { color: #60a5fa; font-weight: 600; font-size: 12px; }
-        .ai-insight .text { font-size: 14px; margin-top: 4px; color: #e2e8f0; }
-        .edit-input {
+        .ai-insight .label { color: #60a5fa; font-weight: 700; font-size: 11px; letter-spacing: 0.5px; text-transform: uppercase; }
+        .ai-insight .text { font-size: 13px; margin-top: 6px; color: #cbd5e1; line-height: 1.5; }
+        
+        /* Scenario Badges */
+        .scenario-badge {
+            background: rgba(30, 41, 59, 0.6);
+            padding: 5px 14px;
+            border-radius: 40px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #94a3b8;
+            border: 1px solid var(--glass-border);
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .scenario-badge:hover { background: #1e293b; color: #cbd5e1; }
+        .scenario-badge.active {
+            background: #3b82f6;
+            color: #ffffff;
+            border-color: #60a5fa;
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.4);
+        }
+        
+        .flex-between { display: flex; justify-content: space-between; align-items: center; }
+        .gap-8 { gap: 8px; }
+        .mt-8 { margin-top: 8px; }
+        .mb-8 { margin-bottom: 8px; }
+        .flex-wrap { flex-wrap: wrap; }
+        
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #1e293b;
+            border: 1px solid #334155;
+            padding: 12px 24px;
+            border-radius: 40px;
+            font-size: 13px;
+            font-weight: 500;
+            max-width: 90%;
+            text-align: center;
+            box-shadow: 0 12px 32px rgba(0,0,0,0.7);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.2s;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 999;
+        }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+        
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(7, 11, 20, 0.85);
+            backdrop-filter: blur(16px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease;
+            z-index: 1000;
+            padding: 16px;
+        }
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+        .modal-content {
             background: #0f1a2b;
-            border: 1px solid #263340;
-            border-radius: 10px;
-            padding: 6px 12px;
+            border: 1px solid var(--glass-border);
+            width: 100%;
+            max-width: 400px;
+            border-radius: 24px;
+            padding: 24px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            transform: scale(0.95);
+            transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .modal-overlay.active .modal-content { transform: scale(1); }
+        .modal-title { font-size: 18px; font-weight: 700; margin-bottom: 16px; color: #f8fafc; }
+        
+        .form-group { margin-bottom: 16px; }
+        .form-label { display: block; font-size: 11px; text-transform: uppercase; font-weight: 700; color: #64748b; margin-bottom: 6px; letter-spacing: 0.5px; }
+        .form-control {
+            width: 100%;
+            background: rgba(7, 11, 20, 0.5);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 12px;
             color: white;
             font-size: 14px;
-            width: 100px;
-            text-align: right;
+            transition: 0.2s;
         }
-        .edit-input:focus { outline: none; border-color: #3b82f6; }
+        .form-control:focus { outline: none; border-color: #3b82f6; background: rgba(7, 11, 20, 0.8); }
+        .form-control::placeholder { color: #475569; }
+        
+        .form-radio-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .radio-btn {
+            border: 1px solid var(--glass-border);
+            background: rgba(7, 11, 20, 0.3);
+            border-radius: 12px;
+            padding: 10px;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            color: #94a3b8;
+            transition: 0.2s;
+        }
+        .radio-btn.selected[data-type="inflow"] { background: rgba(74, 222, 128, 0.15); border-color: #4ade80; color: #4ade80; }
+        .radio-btn.selected[data-type="outflow"] { background: rgba(248, 113, 113, 0.15); border-color: #f87171; color: #f87171; }
+        
+        .modal-actions { display: grid; grid-template-columns: 1fr 2fr; gap: 10px; margin-top: 24px; }
+        .btn-close-modal {
+            background: transparent;
+            border: 1px solid var(--glass-border);
+            color: #94a3b8;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            padding: 12px;
+        }
+        .btn-submit {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            padding: 12px;
+            transition: 0.2s;
+        }
+        .btn-submit:hover { background: #2563eb; }
+        
+        .footer-meta {
+            text-align: center;
+            margin-top: 32px;
+            font-size: 11px;
+            color: #475569;
+            line-height: 1.6;
+        }
+        .footer-meta span { color: #334155; }
+        
+        /* Responsive */
+        @media (max-width: 400px) {
+            .grid-2 { gap: 8px; }
+            .card-value { font-size: 18px; }
+            .big-number { font-size: 26px; }
+            .shortcut-grid { grid-template-columns: 1fr; }
+            .forecast-grid { grid-template-columns: 1fr 1fr; }
+            .mmr-box { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
 <div class="app" id="app">
+    <!-- Header -->
     <div class="header">
         <span class="logo">◆ FinSight Pro</span>
-        <span class="badge" id="aiBadge">🤖 AI · Live</span>
+        <button class="btn-primary" onclick="toggleModal(true)">➕ Add Data</button>
     </div>
 
-    <!-- AI Insights -->
+    <!-- AI Insight -->
     <div class="ai-insight" id="aiInsight">
         <div class="label">🧠 AI Financial Insight</div>
-        <div class="text" id="aiText">Analyzing cash flow patterns...</div>
+        <div class="text" id="aiText">Analyzing dynamic patterns...</div>
     </div>
 
-    <!-- Main KPI -->
+    <!-- Total Balance -->
     <div class="card" style="margin-bottom:16px;">
         <div class="flex-between">
             <span class="card-label">Total Balance (KES)</span>
-            <span class="scenario-badge" id="scenarioBtn">📊 Scenario</span>
+            <span class="scenario-badge" onclick="applyScenario('base')">📊 Reset Base</span>
         </div>
-        <div class="card-value big-number" id="totalBalance">KSh 1,230,341</div>
+        <div class="card-value big-number" id="totalBalance">KSh 0</div>
         <span class="card-change positive" id="balanceChange">▲ 73.3%</span>
-        <span style="margin-left:10px;font-size:13px;color:#94a3b8;">vs last month</span>
+        <span style="margin-left:6px;font-size:12px;color:#64748b;">vs last month</span>
     </div>
 
-    <!-- 2-col: EBITDA + Income -->
+    <!-- Grid 2x2 -->
     <div class="grid-2">
         <div class="card">
             <div class="card-label">EBITDA</div>
-            <div class="card-value" id="ebitda">KSh 253,110</div>
+            <div class="card-value" id="ebitda">KSh 0</div>
             <span class="card-change positive">▲ 5.3%</span>
         </div>
         <div class="card">
             <div class="card-label">Income</div>
-            <div class="card-value" id="income">KSh 455,771</div>
+            <div class="card-value" id="income">KSh 0</div>
             <span class="card-change positive">▲ 11.2%</span>
         </div>
     </div>
 
-    <!-- Outcome + Growth -->
     <div class="grid-2">
         <div class="card">
             <div class="card-label">Outcome</div>
-            <div class="card-value" style="color:#f87171;" id="outcome">- KSh 567,000</div>
+            <div class="card-value" style="color:#f87171;" id="outcome">- KSh 0</div>
             <span class="card-change negative">▼ 1.3%</span>
         </div>
         <div class="card">
@@ -344,37 +508,32 @@
     <div style="margin-bottom:12px;">
         <div class="flex-between">
             <span class="card-label">Accounts</span>
-            <span style="font-size:12px;color:#64748b;">balance</span>
+            <span style="font-size:11px;color:#64748b;text-transform: uppercase; font-weight:600;">Distribution</span>
         </div>
-        <div class="account-row" id="accountList">
-            <span class="account-chip">🏦 Brex <span class="bal">KSh 3,472</span></span>
-            <span class="account-chip">🏦 SVB <span class="bal">KSh 2,349</span></span>
-            <span class="account-chip">🏦 Chase <span class="bal">KSh 9,907</span></span>
-            <span class="account-chip">💳 Square <span class="bal">KSh 8,976</span></span>
-        </div>
+        <div class="account-row" id="accountList"></div>
     </div>
 
     <hr class="divider" />
 
-    <!-- Cashflow Forecast -->
-    <div style="background:#0f1a2b;border-radius:16px;padding:6px 14px;border:1px solid #1e2a3a;">
+    <!-- Forecast -->
+    <div style="background:rgba(15, 26, 43, 0.4);border-radius:20px;padding:14px;border:1px solid var(--glass-border);">
         <div class="flex-between">
             <span class="card-label">📈 4-Week Forecast</span>
-            <span style="font-size:11px;color:#64748b;">AI predicted</span>
+            <span style="font-size:11px;color:#64748b;">AI Predictive</span>
         </div>
         <div class="forecast-grid" id="forecastGrid">
-            <div class="forecast-item"><div class="week">Week 1</div><div class="amount" style="color:#4ade80;">+KSh 142k</div></div>
-            <div class="forecast-item"><div class="week">Week 2</div><div class="amount" style="color:#fbbf24;">+KSh 89k</div></div>
-            <div class="forecast-item"><div class="week">Week 3</div><div class="amount" style="color:#f87171;">-KSh 34k</div></div>
-            <div class="forecast-item"><div class="week">Week 4</div><div class="amount" style="color:#4ade80;">+KSh 67k</div></div>
+            <div class="forecast-item"><div class="week">Week 1</div><div class="amount">...</div></div>
+            <div class="forecast-item"><div class="week">Week 2</div><div class="amount">...</div></div>
+            <div class="forecast-item"><div class="week">Week 3</div><div class="amount">...</div></div>
+            <div class="forecast-item"><div class="week">Week 4</div><div class="amount">...</div></div>
         </div>
-        <div class="progress-bar"><div class="fill" id="forecastBar" style="width:65%;background:linear-gradient(90deg,#4ade80,#fbbf24,#f87171);"></div></div>
+        <div class="progress-bar"><div class="fill" id="forecastBar" style="width:50%;background:linear-gradient(90deg,#4ade80,#fbbf24,#f87171);"></div></div>
     </div>
 
-    <!-- Risk of cash gap -->
+    <!-- Risk Box -->
     <div class="risk-box" id="riskBox">
-        <span class="label">⚠️ Risk of cash gap on Mar 25th</span>
-        <span class="amount" id="riskAmount">KSh 1,426,231</span>
+        <span class="label">⚠️ Risk of cash gap prediction</span>
+        <span class="amount" id="riskAmount">KSh 0</span>
     </div>
 
     <!-- Users -->
@@ -386,46 +545,77 @@
         <div class="card-value" style="font-size:28px;" id="newUsers">14,833</div>
     </div>
 
-    <!-- Transfer shortcuts -->
-    <div style="margin:16px 0 8px;">
+    <!-- Transfer Shortcuts -->
+    <div style="margin:16px 0 4px;">
         <span class="card-label">⚡ Transfer funds</span>
     </div>
     <div class="shortcut-grid">
-        <div class="shortcut-btn" onclick="quickTransfer('Personal PayPal', 2000)">💳 Personal PayPal <small>KSh 2,000</small></div>
-        <div class="shortcut-btn" onclick="quickTransfer('Virtual Card', 0)">🪪 Virtual card <small>Set limit</small></div>
+        <div class="shortcut-btn" onclick="quickTransfer('M-Pesa Business Account', 2000)">📱 Pay to M-Pesa <small>KSh 2,000 shortcut</small></div>
+        <div class="shortcut-btn" onclick="quickTransfer('PayPal Wallet', 0)">💳 PayPal Settlement <small>Custom draw limit</small></div>
     </div>
 
     <!-- Runway -->
-    <div style="margin:16px 0 8px;">
+    <div style="margin:16px 0 4px;">
         <span class="card-label">🛫 Months of Runway</span>
     </div>
     <div class="runway-box">
-        <span style="color:#94a3b8;">Ideal: 12–18 mo</span>
-        <span style="font-weight:700;color:#facc15;" id="cashOutDate">Cash out: Apr 2023</span>
-        <span style="color:#4ade80;font-weight:600;" id="monthsLeft">~9 mo left</span>
+        <span style="color:#94a3b8; font-size:13px;">Target: 12–18 mo</span>
+        <span style="font-weight:700;color:#facc15; font-size:13px;" id="cashOutDate">Runway End: --</span>
+        <span style="color:#4ade80;font-weight:600; font-size:13px;" id="monthsLeft">~0 mo</span>
     </div>
 
-    <!-- MMR -->
+    <!-- MRR -->
     <div style="margin:16px 0 4px;">
-        <span class="card-label">📊 MMR (Monthly Recurring)</span>
+        <span class="card-label">📊 MRR Tiers</span>
     </div>
-    <div class="mmr-box">
-        <div class="mmr-item"><span class="val" style="color:#94a3b8;" id="mmr1">KSh 0</span></div>
-        <div class="mmr-item"><span class="val" style="color:#94a3b8;" id="mmr2">KSh 0</span></div>
-        <div class="mmr-item"><span class="val" style="color:#94a3b8;" id="mmr3">KSh 0</span></div>
-    </div>
+    <div class="mmr-box" id="mrrGrid"></div>
 
-    <!-- Scenario Simulator -->
-    <div style="margin:16px 0 8px;display:flex;gap:8px;flex-wrap:wrap;">
-        <span class="card-label">🎯 Scenario:</span>
+    <!-- Scenario Badges -->
+    <div style="margin:20px 0 8px;display:flex;gap:6px;flex-wrap:wrap; align-items:center;">
+        <span class="card-label" style="margin-right:4px;">🎯 Scenario:</span>
         <span class="scenario-badge active" data-scenario="base" onclick="applyScenario('base')">Base</span>
         <span class="scenario-badge" data-scenario="optimistic" onclick="applyScenario('optimistic')">Optimistic</span>
         <span class="scenario-badge" data-scenario="pessimistic" onclick="applyScenario('pessimistic')">Pessimistic</span>
     </div>
 
     <div class="footer-meta">
-        FinSight Pro · AI-Powered · All figures in KES
-        <br><span style="color:#334155;">Click any card to simulate changes</span>
+        FinSight Pro · Real-time Operational Node<br>
+        <span>All dynamic fields sync with local state</span>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="inputModal">
+    <div class="modal-content">
+        <div class="modal-title">Log New Transaction</div>
+        
+        <div class="form-group">
+            <label class="form-label">Transaction Type</label>
+            <div class="form-radio-group">
+                <div class="radio-btn selected" data-type="inflow" onclick="setTxType('inflow')">Inflow (+)</div>
+                <div class="radio-btn" data-type="outflow" onclick="setTxType('outflow')">Outflow (-)</div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Amount (KES)</label>
+            <input type="number" id="txAmount" class="form-control" placeholder="e.g. 50000" min="1">
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Target Account</label>
+            <select id="txAccount" class="form-control"></select>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Memo</label>
+            <input type="text" id="txMemo" class="form-control" placeholder="Invoice, vendor payout...">
+        </div>
+
+        <div class="modal-actions">
+            <button class="btn-close-modal" onclick="toggleModal(false)">Cancel</button>
+            <button class="btn-submit" onclick="submitTransaction()">Post Entry</button>
+        </div>
     </div>
 </div>
 
@@ -434,27 +624,26 @@
 
 <script>
 // ============================================================
-// ULTRA PRO LOGIC ENGINE
+// STATE ENGINE
 // ============================================================
-
-// ---------- STATE ----------
 const state = {
-    balance: 1230340.69,
+    balance: 0,
     ebitda: 253110.25,
     income: 455770.88,
-    outcome: 567000.03,
+    outcome: 367000.03,
     growthRate: 9.56,
-    netCashflow: -50028.09,
-    riskAmount: 1426230.54,
+    riskAmount: 0,
     newUsers: 14833,
     userGrowth: 30.3,
-    cashOutDate: 'Apr 2023',
-    monthsLeft: 9,
+    monthsLeft: 0,
+    cashOutDate: '--',
+    scenario: 'base',
+    currentTxType: 'inflow',
     accounts: [
-        { name: 'Brex', balance: 3472 },
-        { name: 'SVB', balance: 2349 },
-        { name: 'Chase', balance: 9907 },
-        { name: 'Square', balance: 8976 }
+        { name: 'M-Pesa B2C', balance: 412500 },
+        { name: 'KCB Corporate', balance: 518400 },
+        { name: 'PayPal Transit', balance: 198200 },
+        { name: 'Local Ledger', balance: 101240 }
     ],
     forecast: [
         { week: 1, amount: 142000 },
@@ -462,55 +651,143 @@ const state = {
         { week: 3, amount: -34000 },
         { week: 4, amount: 67000 }
     ],
-    scenario: 'base',
-    mmr: [0, 0, 0]
+    mrrTiers: [
+        { tier: 'Starter', total: 120500 },
+        { tier: 'Growth', total: 245000 },
+        { tier: 'Enterprise', total: 90270 }
+    ]
 };
 
-// ---------- PERSISTENCE ----------
+// ============================================================
+// PERSISTENCE
+// ============================================================
 function saveState() {
-    try {
-        localStorage.setItem('finsight_state', JSON.stringify(state));
-    } catch(e) {}
+    try { localStorage.setItem('finsight_pro_v4', JSON.stringify(state)); } catch(e) {}
 }
 
 function loadState() {
     try {
-        const saved = localStorage.getItem('finsight_state');
+        const saved = localStorage.getItem('finsight_pro_v4');
         if (saved) {
-            const parsed = JSON.parse(saved);
-            Object.assign(state, parsed);
+            Object.assign(state, JSON.parse(saved));
             return true;
         }
     } catch(e) {}
     return false;
 }
 
-// ---------- AI ENGINE ----------
-function generateAIInsight() {
-    const net = state.income - state.outcome;
-    const ratio = state.outcome / state.income;
-    let insight = '';
+// ============================================================
+// CORE LOGIC
+// ============================================================
+function calculateFinancialMetrics() {
+    state.balance = state.accounts.reduce((sum, acc) => sum + acc.balance, 0);
     
-    if (net < 0) {
-        insight = `⚠️ Cash burn detected (KSh ${Math.abs(net).toLocaleString()}). `;
-        if (ratio > 1.2) insight += `Outcome exceeds income by ${Math.round((ratio-1)*100)}%. Consider cost optimization.`;
-        else if (state.riskAmount > state.balance) insight += `High risk of cash gap on ${state.cashOutDate}. Need ${(state.riskAmount - state.balance).toLocaleString()} KSh.`;
-        else insight += `You have ${state.monthsLeft} months of runway left.`;
+    if (state.outcome > 0) {
+        state.monthsLeft = Math.max(1, Math.round(state.balance / state.outcome));
     } else {
-        insight = `✅ Positive cash flow of KSh ${net.toLocaleString()}. `;
-        if (state.growthRate > 8) insight += `Strong growth at ${state.growthRate}% MoM. `;
-        if (state.newUsers > 10000) insight += `User acquisition is scaling well (+${state.userGrowth}%). `;
-        insight += `Runway: ${state.monthsLeft} months.`;
+        state.monthsLeft = 24;
     }
+
+    const projectDate = new Date();
+    projectDate.setMonth(projectDate.getMonth() + state.monthsLeft);
+    state.cashOutDate = projectDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
     
-    // Add predictive
-    const avgForecast = state.forecast.reduce((s, f) => s + f.amount, 0) / state.forecast.length;
-    if (avgForecast > 0) insight += ` Next 4 weeks forecast: +KSh ${Math.round(avgForecast).toLocaleString()} avg.`;
-    
-    return insight;
+    state.riskAmount = Math.round(state.balance * 1.08 + Math.random() * 50000);
+    state.ebitda = Math.round(state.income * 0.55 - state.outcome * 0.45);
 }
 
-// ---------- SCENARIO ENGINE ----------
+function generateAIInsight() {
+    const margin = state.income - state.outcome;
+    const net = state.balance;
+    
+    if (margin < 0) {
+        return `⚠️ Negative net margin of KSh ${Math.abs(Math.round(margin)).toLocaleString()}. Runway at ${state.monthsLeft} months. Consider cost optimization or revenue acceleration.`;
+    }
+    
+    if (net < 100000) {
+        return `⚠️ Low balance (KSh ${net.toLocaleString()}). Runway: ${state.monthsLeft} months. Review discretionary spending.`;
+    }
+    
+    if (state.monthsLeft < 6) {
+        return `⚠️ Runway below 6 months (${state.monthsLeft}). Urgent capital injection or expense reduction needed.`;
+    }
+    
+    return `✅ Healthy runway of ${state.monthsLeft} months. Income exceeds outcome by KSh ${Math.round(margin).toLocaleString()}. Growth at ${state.growthRate.toFixed(1)}% MoM.`;
+}
+
+// ============================================================
+// TRANSACTION ENGINE
+// ============================================================
+function toggleModal(show) {
+    const modal = document.getElementById('inputModal');
+    if (show) {
+        const select = document.getElementById('txAccount');
+        select.innerHTML = '';
+        state.accounts.forEach((acc, idx) => {
+            select.innerHTML += `<option value="${idx}">${acc.name} (KSh ${acc.balance.toLocaleString()})</option>`;
+        });
+        document.getElementById('txAmount').value = '';
+        document.getElementById('txMemo').value = '';
+        setTxType('inflow');
+        modal.classList.add('active');
+    } else {
+        modal.classList.remove('active');
+    }
+}
+
+function setTxType(type) {
+    state.currentTxType = type;
+    document.querySelectorAll('.radio-btn').forEach(btn => {
+        btn.classList.toggle('selected', btn.dataset.type === type);
+    });
+}
+
+function submitTransaction() {
+    const amtEl = document.getElementById('txAmount');
+    const accEl = document.getElementById('txAccount');
+    const memoEl = document.getElementById('txMemo');
+    
+    const val = parseFloat(amtEl.value);
+    const accIdx = parseInt(accEl.value);
+    const description = memoEl.value.trim() || 'Ledger adjustment';
+
+    if (isNaN(val) || val <= 0) {
+        showToast('❌ Please enter a valid amount');
+        return;
+    }
+
+    if (state.currentTxType === 'outflow' && state.accounts[accIdx].balance < val) {
+        showToast(`❌ Insufficient balance in ${state.accounts[accIdx].name}`);
+        return;
+    }
+
+    if (state.currentTxType === 'inflow') {
+        state.accounts[accIdx].balance += val;
+        state.income += val;
+        state.ebitda += Math.round(val * 0.75);
+    } else {
+        state.accounts[accIdx].balance -= val;
+        state.outcome += val;
+        state.ebitda -= Math.round(val * 0.85);
+    }
+
+    // Update MRR tiers based on inflow
+    if (state.currentTxType === 'inflow' && val > 10000) {
+        state.mrrTiers[0].total += Math.round(val * 0.2);
+        state.mrrTiers[1].total += Math.round(val * 0.5);
+        state.mrrTiers[2].total += Math.round(val * 0.3);
+    }
+
+    calculateFinancialMetrics();
+    saveState();
+    updateUI();
+    toggleModal(false);
+    showToast(`✅ Posted ${state.currentTxType.toUpperCase()} of KSh ${val.toLocaleString()} to ${state.accounts[accIdx].name}`);
+}
+
+// ============================================================
+// SCENARIO ENGINE
+// ============================================================
 function applyScenario(scenario) {
     state.scenario = scenario;
     document.querySelectorAll('.scenario-badge').forEach(el => {
@@ -518,69 +795,63 @@ function applyScenario(scenario) {
     });
     
     const multipliers = {
-        base: { income: 1, outcome: 1, growth: 1, users: 1 },
-        optimistic: { income: 1.25, outcome: 0.9, growth: 1.5, users: 1.4 },
-        pessimistic: { income: 0.85, outcome: 1.15, growth: 0.7, users: 0.7 }
+        base: { inc: 1.0, out: 1.0, gr: 1.0, us: 1.0 },
+        optimistic: { inc: 1.35, out: 0.85, gr: 1.6, us: 1.45 },
+        pessimistic: { inc: 0.75, out: 1.25, gr: 0.4, us: 0.7 }
     };
-    
-    const m = multipliers[scenario] || multipliers.base;
+
+    const m = multipliers[scenario];
     const baseIncome = 455770.88;
-    const baseOutcome = 567000.03;
-    const baseBalance = 1230340.69;
+    const baseOutcome = 367000.03;
     
-    const newIncome = baseIncome * m.income;
-    const newOutcome = baseOutcome * m.outcome;
-    const netImpact = (newIncome - baseIncome) - (newOutcome - baseOutcome);
-    
-    state.income = newIncome;
-    state.outcome = newOutcome;
-    state.balance = baseBalance + netImpact;
-    state.growthRate = 9.56 * m.growth;
-    state.newUsers = Math.round(14833 * m.users);
-    state.userGrowth = 30.3 * m.growth;
-    
-    // Recalc forecast
-    state.forecast = [
-        { week: 1, amount: Math.round(142000 * m.income * (1 + Math.random() * 0.1 - 0.05)) },
-        { week: 2, amount: Math.round(89000 * m.income * (1 + Math.random() * 0.1 - 0.05)) },
-        { week: 3, amount: Math.round(-34000 * m.outcome * (1 + Math.random() * 0.1 - 0.05)) },
-        { week: 4, amount: Math.round(67000 * m.income * (1 + Math.random() * 0.1 - 0.05)) }
-    ];
-    
-    state.riskAmount = Math.round(state.balance * 1.16 + Math.random() * 50000);
-    state.monthsLeft = Math.max(2, Math.round(state.balance / (state.outcome / 12)));
-    
+    state.income = baseIncome * m.inc;
+    state.outcome = baseOutcome * m.out;
+    state.growthRate = 9.56 * m.gr;
+    state.newUsers = Math.round(14833 * m.us);
+    state.userGrowth = 30.3 * m.gr;
+
+    state.accounts[0].balance = Math.round(412500 * m.inc);
+    state.accounts[1].balance = Math.round(518400 * m.inc * 0.9);
+    state.accounts[2].balance = Math.round(198200 * (1 / m.out));
+    state.accounts[3].balance = Math.round(101240 * m.inc);
+
+    calculateFinancialMetrics();
     saveState();
     updateUI();
-    showToast(`📊 Scenario: ${scenario.charAt(0).toUpperCase() + scenario.slice(1)} applied`);
+    showToast(`📊 Scenario: ${scenario.toUpperCase()}`);
 }
 
-// ---------- QUICK TRANSFER ----------
-function quickTransfer(name, amount) {
-    if (amount > 0 && state.balance >= amount) {
-        state.balance -= amount;
-        showToast(`✅ Transferred KSh ${amount.toLocaleString()} to ${name}`);
+// ============================================================
+// SHORTCUT ACTIONS
+// ============================================================
+function quickTransfer(target, defaultAmount) {
+    let amount = defaultAmount;
+    if (amount === 0) {
+        const res = prompt(`Enter amount to send to ${target} (KES):`);
+        if (!res) return;
+        amount = parseFloat(res);
+    }
+
+    if (isNaN(amount) || amount <= 0) {
+        showToast('❌ Invalid amount');
+        return;
+    }
+
+    if (state.accounts[0].balance >= amount) {
+        state.accounts[0].balance -= amount;
+        state.outcome += amount;
+        calculateFinancialMetrics();
         saveState();
         updateUI();
-    } else if (amount === 0) {
-        const custom = prompt(`Enter amount for ${name} (KES):`);
-        if (custom) {
-            const val = parseFloat(custom);
-            if (!isNaN(val) && val > 0 && state.balance >= val) {
-                state.balance -= val;
-                showToast(`✅ Transferred KSh ${val.toLocaleString()} to ${name}`);
-                saveState();
-                updateUI();
-            } else {
-                showToast('❌ Invalid amount or insufficient balance');
-            }
-        }
+        showToast(`✅ KSh ${amount.toLocaleString()} sent to ${target}`);
     } else {
-        showToast('❌ Insufficient balance');
+        showToast('❌ Insufficient balance in M-Pesa account');
     }
 }
 
-// ---------- UI UPDATE ----------
+// ============================================================
+// UI RENDER
+// ============================================================
 function updateUI() {
     document.getElementById('totalBalance').textContent = `KSh ${Math.round(state.balance).toLocaleString()}`;
     document.getElementById('ebitda').textContent = `KSh ${Math.round(state.ebitda).toLocaleString()}`;
@@ -590,105 +861,105 @@ function updateUI() {
     document.getElementById('riskAmount').textContent = `KSh ${Math.round(state.riskAmount).toLocaleString()}`;
     document.getElementById('newUsers').textContent = state.newUsers.toLocaleString();
     document.getElementById('userChange').textContent = `▲ ${state.userGrowth.toFixed(1)}%`;
-    document.getElementById('cashOutDate').textContent = `Cash out: ${state.cashOutDate}`;
-    document.getElementById('monthsLeft').textContent = `~${state.monthsLeft} mo left`;
-    
+    document.getElementById('cashOutDate').textContent = `Runway End: ${state.cashOutDate}`;
+    document.getElementById('monthsLeft').textContent = `~${state.monthsLeft} mo`;
+
+    // Accounts
+    const accountContainer = document.getElementById('accountList');
+    accountContainer.innerHTML = '';
+    state.accounts.forEach(acc => {
+        const chip = document.createElement('span');
+        chip.className = 'account-chip';
+        chip.innerHTML = `🏦 ${acc.name} <span class="bal">KSh ${Math.round(acc.balance).toLocaleString()}</span>`;
+        accountContainer.appendChild(chip);
+    });
+
+    // MRR
+    const mrrContainer = document.getElementById('mrrGrid');
+    mrrContainer.innerHTML = '';
+    state.mrrTiers.forEach(tier => {
+        const item = document.createElement('div');
+        item.className = 'mmr-item';
+        item.innerHTML = `<div class="tier-lbl">${tier.tier}</div><div class="val">KSh ${Math.round(tier.total).toLocaleString()}</div>`;
+        mrrContainer.appendChild(item);
+    });
+
     // Forecast
     const forecastEls = document.querySelectorAll('.forecast-item .amount');
-    state.forecast.forEach((f, i) => {
-        if (forecastEls[i]) {
-            const sign = f.amount >= 0 ? '+' : '';
-            const color = f.amount >= 0 ? '#4ade80' : '#f87171';
-            forecastEls[i].textContent = `${sign}KSh ${Math.abs(f.amount).toLocaleString()}`;
-            forecastEls[i].style.color = color;
+    let totalForecast = 0;
+    state.forecast.forEach((f, idx) => {
+        if (forecastEls[idx]) {
+            const factor = state.scenario === 'optimistic' ? 1.4 : (state.scenario === 'pessimistic' ? 0.6 : 1.0);
+            const amount = Math.round(f.amount * factor);
+            totalForecast += amount;
+            forecastEls[idx].textContent = `${amount >= 0 ? '+' : ''}KSh ${Math.round(amount/1000)}k`;
+            forecastEls[idx].style.color = amount >= 0 ? '#4ade80' : '#f87171';
         }
     });
-    
-    // Progress bar - based on net cash position
-    const total = state.forecast.reduce((s, f) => s + f.amount, 0);
-    const pct = Math.min(100, Math.max(10, 50 + (total / 50000)));
+
+    // Progress bar
+    const pct = Math.min(100, Math.max(15, 50 + (totalForecast / 6000)));
     document.getElementById('forecastBar').style.width = `${pct}%`;
-    
-    // AI Insight
-    document.getElementById('aiText').textContent = generateAIInsight();
-    
-    // Risk box color
+
+    // Risk box
     const riskBox = document.getElementById('riskBox');
     if (state.riskAmount > state.balance) {
-        riskBox.style.borderColor = '#7f1d1d';
-        riskBox.style.background = '#2a1a2a';
+        riskBox.className = 'risk-box';
     } else {
-        riskBox.style.borderColor = '#1a3a2a';
-        riskBox.style.background = '#0f1a2b';
+        riskBox.className = 'risk-box safe';
     }
+
+    // AI insight
+    document.getElementById('aiText').textContent = generateAIInsight();
 }
 
-// ---------- TOAST ----------
+// ============================================================
+// TOAST
+// ============================================================
 function showToast(msg) {
     const toast = document.getElementById('toast');
     toast.textContent = msg;
     toast.classList.add('show');
     clearTimeout(toast._timeout);
-    toast._timeout = setTimeout(() => toast.classList.remove('show'), 3000);
+    toast._timeout = setTimeout(() => toast.classList.remove('show'), 3500);
 }
 
-// ---------- AUTO REFRESH ----------
+// ============================================================
+// AUTO REFRESH
+// ============================================================
 function autoRefresh() {
-    // Simulate real-time data updates
-    const randomFactor = 1 + (Math.random() * 0.02 - 0.01);
-    state.balance *= randomFactor;
-    state.ebitda *= (1 + (Math.random() * 0.01 - 0.005));
-    state.income *= (1 + (Math.random() * 0.015 - 0.007));
-    state.outcome *= (1 + (Math.random() * 0.01 - 0.005));
-    state.growthRate += (Math.random() * 0.4 - 0.2);
-    state.newUsers += Math.round(Math.random() * 20 - 10);
-    state.userGrowth += (Math.random() * 0.5 - 0.25);
-    
-    // Recalc risk
-    state.riskAmount = Math.round(state.balance * 1.16 + Math.random() * 50000);
-    state.monthsLeft = Math.max(2, Math.round(state.balance / (state.outcome / 12)));
-    
-    saveState();
+    const variance = 1 + (Math.random() * 0.002 - 0.001);
+    state.accounts.forEach(acc => acc.balance = Math.round(acc.balance * variance));
+    calculateFinancialMetrics();
     updateUI();
 }
 
-// ---------- INTERACTIVE CARDS ----------
-document.querySelectorAll('.card, .risk-box, .runway-box, .account-chip').forEach(el => {
-    el.addEventListener('click', function(e) {
-        if (e.target.closest('.edit-input')) return;
-        showToast('💡 Click scenario badges above to simulate');
-    });
-});
-
-// ---------- INIT ----------
-loadState();
+// ============================================================
+// INIT
+// ============================================================
+if (!loadState()) {
+    calculateFinancialMetrics();
+}
 updateUI();
-showToast('🚀 FinSight Pro · AI Engine Active');
 
-// Auto-refresh every 15 seconds (simulate live data)
 setInterval(autoRefresh, 15000);
-
-// Save state on page leave
 window.addEventListener('beforeunload', saveState);
 
-// ---------- SERVICE WORKER (PWA) ----------
+// Service Worker
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('data:application/javascript,' + encodeURIComponent(`
         self.addEventListener('install', e => e.waitUntil(skipWaiting()));
         self.addEventListener('activate', e => e.waitUntil(clients.claim()));
         self.addEventListener('fetch', e => {
             e.respondWith(
-                fetch(e.request).catch(() => new Response('🚀 FinSight Pro · Offline', { 
-                    status: 503,
-                    headers: { 'Content-Type': 'text/html' }
-                }))
+                fetch(e.request).catch(() => new Response('🚀 FinSight Pro Offline', { status: 503 }))
             );
         });
     `)).catch(() => {});
 }
 
-console.log('🧠 FinSight Pro · Ultra Logic Engine');
-console.log('📊 State:', state);
+console.log('🧠 FinSight Pro v4 · Ultra Logic Engine Active');
+console.log('📊 Current State:', state);
 </script>
 </body>
 </html>
