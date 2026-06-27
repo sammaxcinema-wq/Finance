@@ -6,8 +6,8 @@
     <meta name="theme-color" content="#0f172a" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <link rel="manifest" href="data:application/json,{"name":"FinSight Pro","short_name":"FinSight","start_url":".","display":"standalone","background_color":"#0f172a","theme_color":"#0f172a","icons":[{"src":"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%233b82f6'/%3E%3Ctext x='50' y='68' font-size='52' text-anchor='middle' fill='white' font-family='sans-serif'%3E%26%23x20B9;%3C/text%3E%3C/svg%3E","sizes":"192x192","type":"image/svg+xml"}]}" />
-    <title>FinSight Pro · Manual Control</title>
+    <link rel="manifest" href="data:application/json,{"name":"FinSight Pro","short_name":"FinSight","start_url":".","display":"standalone","background_color":"#0f172a","theme_color":"#0f172a","icons":[{"src":"https://i.ibb.co/B5VkzwB7/1782584384508.png","sizes":"192x192","type":"image/png","purpose":"any maskable"},{"src":"https://i.ibb.co/B5VkzwB7/1782584384508.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}]}" />
+    <title>FinSight Pro · PWA</title>
     <style>
         :root {
             --glass-bg: rgba(19, 30, 47, 0.7);
@@ -38,6 +38,99 @@
             margin: 0 auto;
         }
         
+        /* Install Banner */
+        .install-banner {
+            display: none;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(167, 139, 250, 0.2));
+            border: 1px solid var(--primary);
+            border-radius: 16px;
+            padding: 12px 16px;
+            margin-bottom: 16px;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px;
+            animation: slideDown 0.5s ease;
+        }
+        .install-banner.show { display: flex; }
+        .install-banner .message {
+            font-size: 13px;
+            color: #cbd5e1;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .install-banner .message .icon { font-size: 20px; }
+        .install-btn {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border: none;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            white-space: nowrap;
+        }
+        .install-btn:hover { opacity: 0.9; transform: scale(1.02); }
+        .install-btn:active { transform: scale(0.95); }
+        .install-dismiss {
+            background: transparent;
+            border: none;
+            color: #64748b;
+            cursor: pointer;
+            font-size: 18px;
+            padding: 0 4px;
+        }
+        .install-dismiss:hover { color: #e2e8f0; }
+        
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Logo Styles */
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+        .logo-img {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            object-fit: cover;
+            border: 1px solid var(--glass-border);
+        }
+        .logo-text {
+            font-weight: 800;
+            font-size: 22px;
+            letter-spacing: -0.75px;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa, #f472b6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        /* Auth Logo */
+        .auth-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        .auth-logo .logo-img {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            object-fit: cover;
+        }
+        .auth-logo .logo-text {
+            font-size: 28px;
+        }
+        
         /* Auth Container */
         .auth-container {
             background: var(--glass-bg);
@@ -46,16 +139,6 @@
             padding: 32px 24px;
             border: 1px solid var(--glass-border);
             box-shadow: 0 8px 32px rgba(0,0,0,0.25);
-        }
-        .auth-logo {
-            font-weight: 800;
-            font-size: 28px;
-            letter-spacing: -0.75px;
-            background: linear-gradient(135deg, #60a5fa, #a78bfa, #f472b6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-align: center;
-            margin-bottom: 24px;
         }
         .auth-subtitle {
             text-align: center;
@@ -195,14 +278,14 @@
             flex-wrap: wrap;
             gap: 8px;
         }
-        .logo {
-            font-weight: 800;
-            font-size: 24px;
-            letter-spacing: -0.75px;
-            background: linear-gradient(135deg, #60a5fa, #a78bfa, #f472b6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        .header .logo-container .logo-img {
+            width: 36px;
+            height: 36px;
         }
+        .header .logo-container .logo-text {
+            font-size: 20px;
+        }
+        
         .user-badge {
             display: flex;
             align-items: center;
@@ -322,21 +405,6 @@
             align-items: center;
             gap: 8px;
             flex-wrap: wrap;
-        }
-        .card-value .edit-input {
-            background: rgba(7, 11, 20, 0.6);
-            border: 1px solid var(--glass-border);
-            border-radius: 8px;
-            padding: 4px 10px;
-            color: white;
-            font-size: 16px;
-            font-weight: 700;
-            width: 120px;
-            text-align: right;
-        }
-        .card-value .edit-input:focus {
-            outline: none;
-            border-color: var(--primary);
         }
         .card-change {
             font-size: 11px;
@@ -743,6 +811,21 @@
         .tx-history::-webkit-scrollbar-track { background: rgba(15, 26, 43, 0.3); border-radius: 10px; }
         .tx-history::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 10px; }
         
+        /* Offline Indicator */
+        .offline-indicator {
+            display: none;
+            background: rgba(251, 191, 36, 0.15);
+            border: 1px solid #fbbf24;
+            border-radius: 40px;
+            padding: 4px 12px;
+            font-size: 11px;
+            color: #fbbf24;
+            font-weight: 600;
+            align-items: center;
+            gap: 6px;
+        }
+        .offline-indicator.show { display: inline-flex; }
+        
         @media (max-width: 400px) {
             .grid-2 { gap: 8px; }
             .card-value { font-size: 18px; }
@@ -750,16 +833,33 @@
             .shortcut-grid { grid-template-columns: 1fr; }
             .forecast-grid { grid-template-columns: 1fr 1fr; }
             .mmr-box { grid-template-columns: 1fr; }
-            .card-value .edit-input { width: 80px; font-size: 14px; }
+            .auth-logo .logo-text { font-size: 22px; }
+            .header .logo-container .logo-text { font-size: 16px; }
+            .header .logo-container .logo-img { width: 30px; height: 30px; }
         }
     </style>
 </head>
 <body>
 <div class="app">
+    <!-- Install Banner -->
+    <div class="install-banner" id="installBanner">
+        <div class="message">
+            <span class="icon">📲</span>
+            <span>Install FinSight Pro for the best experience</span>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;">
+            <button class="install-btn" id="installBtn">Install App</button>
+            <button class="install-dismiss" onclick="dismissInstall()">✕</button>
+        </div>
+    </div>
+
     <!-- ==================== AUTH CONTAINER ==================== -->
     <div id="authContainer">
         <div class="auth-container">
-            <div class="auth-logo">◆ FinSight Pro</div>
+            <div class="auth-logo">
+                <img src="https://i.ibb.co/B5VkzwB7/1782584384508.png" alt="FinSight Pro Logo" class="logo-img" />
+                <span class="logo-text">◆ FinSight Pro</span>
+            </div>
             
             <!-- Login Form -->
             <div id="loginForm">
@@ -853,8 +953,12 @@
     <div id="dashboard" class="dashboard">
         <!-- Header -->
         <div class="header">
-            <span class="logo">◆ FinSight Pro</span>
+            <a class="logo-container" href="#">
+                <img src="https://i.ibb.co/B5VkzwB7/1782584384508.png" alt="FinSight Pro Logo" class="logo-img" />
+                <span class="logo-text">FinSight Pro</span>
+            </a>
             <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                <span class="offline-indicator" id="offlineIndicator">📡 Offline</span>
                 <div class="user-badge">
                     <div class="avatar" id="userAvatar">D</div>
                     <div>
@@ -1020,7 +1124,7 @@
         </div>
         
         <div class="footer-meta">
-            FinSight Pro · Enterprise Suite<br>
+            FinSight Pro · PWA Ready<br>
             <span>Click ✏️ to edit any value · ✕ to delete · Auto-saves</span>
         </div>
     </div>
@@ -1245,6 +1349,75 @@
 <div class="toast" id="toast"></div>
 
 <script>
+// ============================================================
+// PWA INSTALL LOGIC
+// ============================================================
+
+let deferredPrompt = null;
+const installBanner = document.getElementById('installBanner');
+const installBtn = document.getElementById('installBtn');
+
+// Check if already installed
+window.addEventListener('appinstalled', () => {
+    installBanner.classList.remove('show');
+    showToast('✅ App installed successfully!', 'success');
+});
+
+// Listen for beforeinstallprompt
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    installBanner.classList.add('show');
+});
+
+// Install button click
+installBtn.addEventListener('click', async () => {
+    if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const result = await deferredPrompt.userChoice;
+        if (result.outcome === 'accepted') {
+            installBanner.classList.remove('show');
+            showToast('✅ App installed successfully!', 'success');
+        } else {
+            showToast('❌ Installation declined', 'error');
+        }
+        deferredPrompt = null;
+    } else {
+        showToast('📲 Open in Chrome/Safari and tap "Add to Home Screen"', 'info');
+    }
+});
+
+function dismissInstall() {
+    installBanner.classList.remove('show');
+    localStorage.setItem('dismissedInstall', 'true');
+}
+
+// Check if user dismissed before
+if (localStorage.getItem('dismissedInstall') === 'true') {
+    installBanner.classList.remove('show');
+}
+
+// ============================================================
+// OFFLINE DETECTION
+// ============================================================
+
+const offlineIndicator = document.getElementById('offlineIndicator');
+
+window.addEventListener('online', () => {
+    offlineIndicator.classList.remove('show');
+    showToast('🔄 Back online!', 'success');
+});
+
+window.addEventListener('offline', () => {
+    offlineIndicator.classList.add('show');
+    showToast('📡 You are offline - data will sync when back online', 'error');
+});
+
+// Check initial state
+if (!navigator.onLine) {
+    offlineIndicator.classList.add('show');
+}
+
 // ============================================================
 // AUTH SYSTEM
 // ============================================================
@@ -1560,15 +1733,12 @@ function submitBalanceEdit() {
 
     const currentTotal = dashboardState.balance;
     if (currentTotal === 0) {
-        // If current total is 0, distribute equally
         const perAccount = newBalance / dashboardState.accounts.length;
         dashboardState.accounts.forEach(acc => acc.balance = Math.round(perAccount));
     } else if (currentDistribution === 'equal') {
-        // Equal distribution
         const perAccount = newBalance / dashboardState.accounts.length;
         dashboardState.accounts.forEach(acc => acc.balance = Math.round(perAccount));
     } else {
-        // Proportional distribution based on current balances
         dashboardState.accounts.forEach(acc => {
             const ratio = acc.balance / currentTotal;
             acc.balance = Math.round(newBalance * ratio);
@@ -1737,8 +1907,6 @@ function submitEditForecast() {
 
     dashboardState.forecast[currentEditForecastIndex].week = week;
     dashboardState.forecast[currentEditForecastIndex].amount = amount;
-    
-    // Resort
     dashboardState.forecast.sort((a, b) => a.week - b.week);
     
     saveState();
@@ -2145,6 +2313,70 @@ function showToast(message, type = 'info') {
 }
 
 // ============================================================
+// SERVICE WORKER REGISTRATION
+// ============================================================
+
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('data:application/javascript,' + encodeURIComponent(`
+        const CACHE_NAME = 'finsight-v2';
+        const urlsToCache = [
+            '.',
+            'https://i.ibb.co/B5VkzwB7/1782584384508.png'
+        ];
+
+        self.addEventListener('install', function(event) {
+            event.waitUntil(
+                caches.open(CACHE_NAME)
+                    .then(function(cache) {
+                        return cache.addAll(urlsToCache);
+                    })
+            );
+        });
+
+        self.addEventListener('fetch', function(event) {
+            event.respondWith(
+                caches.match(event.request)
+                    .then(function(response) {
+                        if (response) {
+                            return response;
+                        }
+                        return fetch(event.request).then(function(response) {
+                            if (!response || response.status !== 200 || response.type !== 'basic') {
+                                return response;
+                            }
+                            var responseToCache = response.clone();
+                            caches.open(CACHE_NAME)
+                                .then(function(cache) {
+                                    cache.put(event.request, responseToCache);
+                                });
+                            return response;
+                        });
+                    })
+                    .catch(function() {
+                        return new Response('🚀 FinSight Pro - Offline', { status: 503 });
+                    })
+            );
+        });
+
+        self.addEventListener('activate', function(event) {
+            event.waitUntil(
+                caches.keys().then(function(cacheNames) {
+                    return Promise.all(
+                        cacheNames.filter(function(cacheName) {
+                            return cacheName !== CACHE_NAME;
+                        }).map(function(cacheName) {
+                            return caches.delete(cacheName);
+                        })
+                    );
+                })
+            );
+        });
+    `)).catch(function(err) {
+        console.log('ServiceWorker registration failed: ', err);
+    });
+}
+
+// ============================================================
 // DASHBOARD
 // ============================================================
 
@@ -2184,9 +2416,9 @@ if (!checkSession()) {
 setInterval(autoRefresh, 15000);
 window.addEventListener('beforeunload', saveState);
 
-console.log('🔐 FinSight Pro · Enterprise Suite with Manual Control');
+console.log('🚀 FinSight Pro · PWA with Custom Logo');
 console.log('👤 Demo: demo@finsight.com / Demo@123');
-console.log('✏️ Click any ✏️ to edit, ✕ to delete');
+console.log('📲 Click "Install App" to install as PWA');
 </script>
 </body>
 </html>
