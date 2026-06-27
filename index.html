@@ -7,7 +7,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <link rel="manifest" href="data:application/json,{"name":"FinSight Pro","short_name":"FinSight","start_url":".","display":"standalone","background_color":"#0f172a","theme_color":"#0f172a","icons":[{"src":"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%233b82f6'/%3E%3Ctext x='50' y='68' font-size='52' text-anchor='middle' fill='white' font-family='sans-serif'%3E%26%23x20B9;%3C/text%3E%3C/svg%3E","sizes":"192x192","type":"image/svg+xml"}]}" />
-    <title>FinSight Pro · Secure Auth</title>
+    <title>FinSight Pro · Enterprise Suite</title>
     <style>
         :root {
             --glass-bg: rgba(19, 30, 47, 0.7);
@@ -29,9 +29,6 @@
             background-image: radial-gradient(circle at 50% 0%, #101b30 0%, #070b14 70%);
             color: #e2e8f0;
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             padding: 16px;
             -webkit-font-smoothing: antialiased;
         }
@@ -164,6 +161,481 @@
         }
         .password-toggle .toggle-btn:hover { color: #e2e8f0; }
         
+        .password-strength {
+            height: 4px;
+            border-radius: 4px;
+            margin-top: 4px;
+            background: #1e293b;
+            transition: 0.3s;
+        }
+        .password-strength .bar {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.3s, background 0.3s;
+            width: 0%;
+        }
+        
+        /* Dashboard Styles */
+        .dashboard {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+        .dashboard.active { display: block; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0 20px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .logo {
+            font-weight: 800;
+            font-size: 24px;
+            letter-spacing: -0.75px;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa, #f472b6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .user-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(30, 41, 59, 0.6);
+            padding: 6px 14px 6px 6px;
+            border-radius: 40px;
+            border: 1px solid var(--glass-border);
+            font-size: 13px;
+        }
+        .user-badge .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), #a78bfa);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+            color: white;
+        }
+        .user-badge .role-badge {
+            background: rgba(59, 130, 246, 0.2);
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 10px;
+            color: var(--primary);
+            font-weight: 600;
+        }
+        .logout-btn {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: var(--danger);
+            padding: 6px 14px;
+            border-radius: 40px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .logout-btn:hover { background: rgba(239, 68, 68, 0.3); }
+        
+        .btn-icon {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #f87171;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
+        }
+        .btn-icon:hover { background: rgba(239, 68, 68, 0.4); transform: scale(1.1); }
+        .btn-icon:active { transform: scale(0.9); }
+        
+        .btn-primary-small {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border: none;
+            color: white;
+            padding: 6px 16px;
+            border-radius: 40px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-primary-small:hover { opacity: 0.9; transform: translateY(-1px); }
+        
+        .card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            padding: 18px 16px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card:active { transform: scale(0.98); }
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .card-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.75px;
+            color: #64748b;
+            font-weight: 700;
+        }
+        .card-value {
+            font-size: 22px;
+            font-weight: 700;
+            margin-top: 4px;
+            letter-spacing: -0.5px;
+            color: #f8fafc;
+        }
+        .card-change {
+            font-size: 11px;
+            font-weight: 600;
+            margin-top: 6px;
+            display: inline-flex;
+            align-items: center;
+            padding: 3px 8px;
+            border-radius: 40px;
+            background: rgba(30, 41, 59, 0.4);
+        }
+        .positive { color: #4ade80; }
+        .negative { color: #f87171; }
+        .big-number { font-size: 32px; font-weight: 800; letter-spacing: -1px; }
+        .divider {
+            border: none;
+            border-top: 1px solid rgba(51, 65, 85, 0.3);
+            margin: 18px 0;
+        }
+        .flex-between { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+        
+        /* Accounts */
+        .account-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        .account-chip {
+            background: rgba(15, 26, 43, 0.6);
+            padding: 6px 14px;
+            border-radius: 40px;
+            font-size: 13px;
+            border: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .account-chip:hover { background: #1a2a3f; border-color: #3b82f6; }
+        .account-chip .bal { font-weight: 600; color: #f1f5f9; }
+        .account-chip .del-account {
+            background: none;
+            border: none;
+            color: #f87171;
+            cursor: pointer;
+            font-size: 12px;
+            padding: 0 2px;
+        }
+        .account-chip .del-account:hover { color: #ef4444; transform: scale(1.2); }
+        
+        /* Risk Box */
+        .risk-box {
+            background: rgba(42, 26, 42, 0.6);
+            border: 1px solid #7f1d1d;
+            border-radius: 16px;
+            padding: 14px 16px;
+            margin: 12px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: 0.2s ease;
+        }
+        .risk-box:hover { background: rgba(58, 26, 42, 0.8); }
+        .risk-box .label { color: #fca5a5; font-size: 13px; font-weight: 500; }
+        .risk-box .amount { color: #f87171; font-weight: 700; font-size: 20px; }
+        .risk-box.safe {
+            border-color: #1a3a2a;
+            background: rgba(26, 42, 26, 0.4);
+        }
+        .risk-box.safe .label { color: #86efac; }
+        .risk-box.safe .amount { color: #4ade80; }
+        
+        /* Shortcuts */
+        .shortcut-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 12px 0;
+        }
+        .shortcut-btn {
+            background: linear-gradient(135deg, #131e2f, #1a2a3f);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 14px 12px;
+            text-align: left;
+            font-size: 13px;
+            font-weight: 600;
+            color: #cbd5e1;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        .shortcut-btn:hover { border-color: #3b82f6; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+        .shortcut-btn:active { transform: scale(0.96); }
+        .shortcut-btn small {
+            display: block;
+            font-weight: 500;
+            color: #64748b;
+            font-size: 11px;
+            margin-top: 4px;
+        }
+        
+        /* Runway */
+        .runway-box {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(15, 26, 43, 0.5);
+            border-radius: 16px;
+            padding: 14px 16px;
+            border: 1px solid var(--glass-border);
+            margin: 8px 0;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        /* MRR */
+        .mmr-box {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 8px 0;
+        }
+        .mmr-item {
+            text-align: center;
+            background: rgba(15, 26, 43, 0.5);
+            padding: 10px 8px;
+            border-radius: 14px;
+            border: 1px solid var(--glass-border);
+            position: relative;
+        }
+        .mmr-item .tier-lbl { font-size: 10px; color: #64748b; text-transform: uppercase; font-weight: 700; margin-bottom: 2px; }
+        .mmr-item .val { font-weight: 700; font-size: 15px; color: #f1f5f9; }
+        .mmr-item .del-mmr {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            background: rgba(239, 68, 68, 0.9);
+            color: white;
+            border: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
+        }
+        .mmr-item .del-mmr:hover { transform: scale(1.2); background: #dc2626; }
+        
+        /* Transactions */
+        .tx-history {
+            margin: 12px 0;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .tx-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: rgba(15, 26, 43, 0.3);
+            border-radius: 10px;
+            margin-bottom: 4px;
+            border: 1px solid var(--glass-border);
+        }
+        .tx-item .tx-info { display: flex; flex-direction: column; gap: 2px; flex: 1; }
+        .tx-item .tx-info .tx-memo { font-size: 12px; color: #94a3b8; }
+        .tx-item .tx-info .tx-account { font-size: 10px; color: #64748b; }
+        .tx-item .tx-amount { font-weight: 600; margin-right: 8px; }
+        .tx-item .tx-amount.inflow { color: #4ade80; }
+        .tx-item .tx-amount.outflow { color: #f87171; }
+        .tx-item .del-tx {
+            background: none;
+            border: none;
+            color: #f87171;
+            cursor: pointer;
+            font-size: 14px;
+            padding: 0 4px;
+        }
+        .tx-item .del-tx:hover { color: #ef4444; transform: scale(1.2); }
+        
+        /* Forecast */
+        .forecast-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+            margin: 12px 0 8px;
+        }
+        .forecast-item {
+            background: rgba(7, 11, 20, 0.5);
+            padding: 10px 4px;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid rgba(51, 65, 85, 0.2);
+        }
+        .forecast-item .week { font-size: 10px; color: #64748b; font-weight: 600; margin-bottom: 2px; }
+        .forecast-item .amount { font-size: 13px; font-weight: 700; }
+        .forecast-item .del-forecast {
+            background: none;
+            border: none;
+            color: #f87171;
+            cursor: pointer;
+            font-size: 10px;
+            margin-top: 2px;
+        }
+        .forecast-item .del-forecast:hover { color: #ef4444; }
+        
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #1e293b;
+            border-radius: 10px;
+            margin: 8px 0 4px;
+            overflow: hidden;
+        }
+        .progress-bar .fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.5s ease-out;
+        }
+        
+        /* AI Insight */
+        .ai-insight {
+            background: linear-gradient(135deg, rgba(26, 42, 63, 0.4), rgba(15, 26, 43, 0.4));
+            border: 1px solid #3b82f6;
+            border-radius: 16px;
+            padding: 14px;
+            margin: 12px 0 16px;
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.08);
+        }
+        .ai-insight .label { color: #60a5fa; font-weight: 700; font-size: 11px; letter-spacing: 0.5px; text-transform: uppercase; }
+        .ai-insight .text { font-size: 13px; margin-top: 6px; color: #cbd5e1; line-height: 1.5; }
+        
+        /* Scenario Badges */
+        .scenario-badge {
+            background: rgba(30, 41, 59, 0.6);
+            padding: 5px 14px;
+            border-radius: 40px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #94a3b8;
+            border: 1px solid var(--glass-border);
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .scenario-badge:hover { background: #1e293b; color: #cbd5e1; }
+        .scenario-badge.active {
+            background: #3b82f6;
+            color: #ffffff;
+            border-color: #60a5fa;
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.4);
+        }
+        
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(7, 11, 20, 0.85);
+            backdrop-filter: blur(16px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease;
+            z-index: 1000;
+            padding: 16px;
+        }
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+        .modal-content {
+            background: #0f1a2b;
+            border: 1px solid var(--glass-border);
+            width: 100%;
+            max-width: 400px;
+            border-radius: 24px;
+            padding: 24px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            transform: scale(0.95);
+            transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .modal-overlay.active .modal-content { transform: scale(1); }
+        .modal-title { font-size: 18px; font-weight: 700; margin-bottom: 16px; color: #f8fafc; }
+        .modal-subtitle { font-size: 13px; color: #94a3b8; margin-bottom: 16px; }
+        
+        .form-radio-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .radio-btn {
+            border: 1px solid var(--glass-border);
+            background: rgba(7, 11, 20, 0.3);
+            border-radius: 12px;
+            padding: 10px;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            color: #94a3b8;
+            transition: 0.2s;
+        }
+        .radio-btn.selected[data-type="inflow"] { background: rgba(74, 222, 128, 0.15); border-color: #4ade80; color: #4ade80; }
+        .radio-btn.selected[data-type="outflow"] { background: rgba(248, 113, 113, 0.15); border-color: #f87171; color: #f87171; }
+        
+        .modal-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 24px; }
+        .btn-close-modal {
+            background: transparent;
+            border: 1px solid var(--glass-border);
+            color: #94a3b8;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            padding: 12px;
+        }
+        .btn-submit {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            padding: 12px;
+            transition: 0.2s;
+        }
+        .btn-submit:hover { background: #2563eb; }
+        .btn-submit.danger { background: #ef4444; }
+        .btn-submit.danger:hover { background: #dc2626; }
+        
         /* Toast */
         .toast {
             position: fixed;
@@ -188,173 +660,6 @@
         .toast.success { border-color: var(--success); }
         .toast.error { border-color: var(--danger); }
         
-        /* Dashboard (hidden by default) */
-        .dashboard {
-            display: none;
-            animation: fadeIn 0.4s ease;
-        }
-        .dashboard.active { display: block; }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .user-badge {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(30, 41, 59, 0.6);
-            padding: 6px 14px 6px 6px;
-            border-radius: 40px;
-            border: 1px solid var(--glass-border);
-            font-size: 13px;
-            cursor: pointer;
-        }
-        .user-badge .avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary), #a78bfa);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 14px;
-            color: white;
-        }
-        .user-badge .role-badge {
-            background: rgba(59, 130, 246, 0.2);
-            padding: 2px 8px;
-            border-radius: 20px;
-            font-size: 10px;
-            color: var(--primary);
-            font-weight: 600;
-        }
-        
-        .logout-btn {
-            background: rgba(239, 68, 68, 0.2);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            color: var(--danger);
-            padding: 6px 14px;
-            border-radius: 40px;
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .logout-btn:hover { background: rgba(239, 68, 68, 0.3); }
-        
-        /* Import dashboard styles from previous version */
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 0 20px;
-        }
-        .logo {
-            font-weight: 800;
-            font-size: 24px;
-            letter-spacing: -0.75px;
-            background: linear-gradient(135deg, #60a5fa, #a78bfa, #f472b6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .card {
-            background: var(--glass-bg);
-            backdrop-filter: blur(12px);
-            border-radius: 20px;
-            padding: 18px 16px;
-            border: 1px solid var(--glass-border);
-            box-shadow: 0 8px 32px rgba(0,0,0,0.25);
-            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .grid-2 {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 16px;
-        }
-        .card-label {
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 0.75px;
-            color: #64748b;
-            font-weight: 700;
-        }
-        .card-value {
-            font-size: 22px;
-            font-weight: 700;
-            margin-top: 4px;
-            letter-spacing: -0.5px;
-            color: #f8fafc;
-        }
-        .big-number { font-size: 32px; font-weight: 800; letter-spacing: -1px; }
-        .positive { color: #4ade80; }
-        .negative { color: #f87171; }
-        .card-change {
-            font-size: 11px;
-            font-weight: 600;
-            margin-top: 6px;
-            display: inline-flex;
-            align-items: center;
-            padding: 3px 8px;
-            border-radius: 40px;
-            background: rgba(30, 41, 59, 0.4);
-        }
-        .divider {
-            border: none;
-            border-top: 1px solid rgba(51, 65, 85, 0.3);
-            margin: 18px 0;
-        }
-        .flex-between { display: flex; justify-content: space-between; align-items: center; }
-        .btn-primary-small {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            border: none;
-            color: white;
-            padding: 6px 16px;
-            border-radius: 40px;
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .btn-primary-small:hover { opacity: 0.9; transform: translateY(-1px); }
-        .account-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 8px;
-        }
-        .account-chip {
-            background: rgba(15, 26, 43, 0.6);
-            padding: 6px 14px;
-            border-radius: 40px;
-            font-size: 13px;
-            border: 1px solid var(--glass-border);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .account-chip .bal { font-weight: 600; color: #f1f5f9; }
-        .risk-box {
-            background: rgba(42, 26, 42, 0.6);
-            border: 1px solid #7f1d1d;
-            border-radius: 16px;
-            padding: 14px 16px;
-            margin: 12px 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .risk-box .label { color: #fca5a5; font-size: 13px; font-weight: 500; }
-        .risk-box .amount { color: #f87171; font-weight: 700; font-size: 20px; }
-        .risk-box.safe {
-            border-color: #1a3a2a;
-            background: rgba(26, 42, 26, 0.4);
-        }
-        .risk-box.safe .label { color: #86efac; }
-        .risk-box.safe .amount { color: #4ade80; }
         .footer-meta {
             text-align: center;
             margin-top: 32px;
@@ -362,123 +667,11 @@
             color: #475569;
             line-height: 1.6;
         }
-        .scenario-badge {
-            background: rgba(30, 41, 59, 0.6);
-            padding: 5px 14px;
-            border-radius: 40px;
-            font-size: 11px;
-            font-weight: 600;
-            color: #94a3b8;
-            border: 1px solid var(--glass-border);
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .scenario-badge.active {
-            background: var(--primary);
-            color: #ffffff;
-            border-color: #60a5fa;
-            box-shadow: 0 0 10px rgba(59, 130, 246, 0.4);
-        }
-        .shortcut-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin: 12px 0;
-        }
-        .shortcut-btn {
-            background: linear-gradient(135deg, #131e2f, #1a2a3f);
-            border: 1px solid var(--glass-border);
-            border-radius: 16px;
-            padding: 14px 12px;
-            font-size: 13px;
-            font-weight: 600;
-            color: #cbd5e1;
-            cursor: pointer;
-        }
-        .shortcut-btn small {
-            display: block;
-            font-weight: 500;
-            color: #64748b;
-            font-size: 11px;
-            margin-top: 4px;
-        }
-        .runway-box {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(15, 26, 43, 0.5);
-            border-radius: 16px;
-            padding: 14px 16px;
-            border: 1px solid var(--glass-border);
-            margin: 8px 0;
-        }
-        .mmr-box {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin: 8px 0;
-        }
-        .mmr-item {
-            text-align: center;
-            background: rgba(15, 26, 43, 0.5);
-            padding: 10px 8px;
-            border-radius: 14px;
-            border: 1px solid var(--glass-border);
-        }
-        .mmr-item .tier-lbl { font-size: 10px; color: #64748b; text-transform: uppercase; font-weight: 700; }
-        .mmr-item .val { font-weight: 700; font-size: 15px; color: #f1f5f9; }
-        .forecast-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 6px;
-            margin: 12px 0 8px;
-        }
-        .forecast-item {
-            background: rgba(7, 11, 20, 0.5);
-            padding: 10px 4px;
-            border-radius: 12px;
-            text-align: center;
-            border: 1px solid rgba(51, 65, 85, 0.2);
-        }
-        .forecast-item .week { font-size: 10px; color: #64748b; font-weight: 600; }
-        .forecast-item .amount { font-size: 13px; font-weight: 700; }
-        .progress-bar {
-            width: 100%;
-            height: 6px;
-            background: #1e293b;
-            border-radius: 10px;
-            margin: 8px 0 4px;
-            overflow: hidden;
-        }
-        .progress-bar .fill {
-            height: 100%;
-            border-radius: 10px;
-            transition: width 0.5s ease-out;
-        }
-        .ai-insight {
-            background: linear-gradient(135deg, rgba(26, 42, 63, 0.4), rgba(15, 26, 43, 0.4));
-            border: 1px solid var(--primary);
-            border-radius: 16px;
-            padding: 14px;
-            margin: 12px 0 16px;
-        }
-        .ai-insight .label { color: #60a5fa; font-weight: 700; font-size: 11px; letter-spacing: 0.5px; text-transform: uppercase; }
-        .ai-insight .text { font-size: 13px; margin-top: 6px; color: #cbd5e1; line-height: 1.5; }
+        .footer-meta span { color: #334155; }
         
-        /* Password strength indicator */
-        .password-strength {
-            height: 4px;
-            border-radius: 4px;
-            margin-top: 4px;
-            background: #1e293b;
-            transition: 0.3s;
-        }
-        .password-strength .bar {
-            height: 100%;
-            border-radius: 4px;
-            transition: width 0.3s, background 0.3s;
-            width: 0%;
-        }
+        .tx-history::-webkit-scrollbar { width: 4px; }
+        .tx-history::-webkit-scrollbar-track { background: rgba(15, 26, 43, 0.3); border-radius: 10px; }
+        .tx-history::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 10px; }
         
         @media (max-width: 400px) {
             .grid-2 { gap: 8px; }
@@ -590,8 +783,8 @@
         <!-- Header -->
         <div class="header">
             <span class="logo">◆ FinSight Pro</span>
-            <div class="flex-between" style="gap:12px;">
-                <div class="user-badge" id="userBadge">
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                <div class="user-badge">
                     <div class="avatar" id="userAvatar">D</div>
                     <div>
                         <span id="userName">User</span>
@@ -600,6 +793,14 @@
                 </div>
                 <button class="logout-btn" onclick="handleLogout()">Sign Out</button>
             </div>
+        </div>
+        
+        <!-- Action Buttons -->
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+            <button class="btn-primary-small" onclick="openAddTransaction()">➕ Add Transaction</button>
+            <button class="btn-primary-small" onclick="openAddAccount()">🏦 Add Account</button>
+            <button class="btn-primary-small" onclick="openAddMRR()">📊 Add MRR Tier</button>
+            <button class="btn-primary-small" onclick="openAddForecast()">📈 Add Forecast</button>
         </div>
         
         <!-- AI Insight -->
@@ -632,15 +833,32 @@
         
         <!-- Accounts -->
         <div style="margin-bottom:12px;">
-            <span class="card-label">Accounts</span>
+            <div class="flex-between">
+                <span class="card-label">Accounts</span>
+                <span style="font-size:11px;color:#64748b;">Click ✕ to delete</span>
+            </div>
             <div class="account-row" id="accountList"></div>
+        </div>
+        
+        <hr class="divider" />
+        
+        <!-- Transactions -->
+        <div style="margin:12px 0;">
+            <div class="flex-between">
+                <span class="card-label">📋 Transaction History</span>
+                <span style="font-size:11px;color:#64748b;">Click ✕ to delete</span>
+            </div>
+            <div class="tx-history" id="txHistory"></div>
         </div>
         
         <hr class="divider" />
         
         <!-- Forecast -->
         <div style="background:rgba(15,26,43,0.4);border-radius:20px;padding:14px;border:1px solid var(--glass-border);">
-            <div class="flex-between"><span class="card-label">📈 4-Week Forecast</span></div>
+            <div class="flex-between">
+                <span class="card-label">📈 4-Week Forecast</span>
+                <span style="font-size:11px;color:#64748b;">Click ✕ to delete</span>
+            </div>
             <div class="forecast-grid" id="forecastGrid">
                 <div class="forecast-item"><div class="week">Week 1</div><div class="amount">...</div></div>
                 <div class="forecast-item"><div class="week">Week 2</div><div class="amount">...</div></div>
@@ -658,7 +876,10 @@
         
         <!-- Users -->
         <div class="card" style="margin:12px 0;">
-            <div class="flex-between"><span class="card-label">👥 New Users</span><span class="card-change positive" id="userChange">▲ 30.3%</span></div>
+            <div class="flex-between">
+                <span class="card-label">👥 New Users</span>
+                <span class="card-change positive" id="userChange">▲ 30.3%</span>
+            </div>
             <div class="card-value" style="font-size:28px;" id="newUsers">14,833</div>
         </div>
         
@@ -678,7 +899,12 @@
         </div>
         
         <!-- MRR -->
-        <div style="margin:16px 0 4px;"><span class="card-label">📊 MRR Tiers</span></div>
+        <div style="margin:16px 0 4px;">
+            <div class="flex-between">
+                <span class="card-label">📊 MRR Tiers</span>
+                <span style="font-size:11px;color:#64748b;">Click ✕ to delete</span>
+            </div>
+        </div>
         <div class="mmr-box" id="mrrGrid"></div>
         
         <!-- Scenarios -->
@@ -690,8 +916,112 @@
         </div>
         
         <div class="footer-meta">
-            FinSight Pro · Secure Enterprise Platform<br>
-            <span>All data encrypted in transit</span>
+            FinSight Pro · Enterprise Suite<br>
+            <span>All data auto-saves · Click ✕ to delete items</span>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== MODALS ==================== -->
+
+<!-- Add Transaction Modal -->
+<div class="modal-overlay" id="txModal">
+    <div class="modal-content">
+        <div class="modal-title">Add Transaction</div>
+        
+        <div class="form-group">
+            <label class="form-label">Transaction Type</label>
+            <div class="form-radio-group">
+                <div class="radio-btn selected" data-type="inflow" onclick="setTxType('inflow')">Inflow (+)</div>
+                <div class="radio-btn" data-type="outflow" onclick="setTxType('outflow')">Outflow (-)</div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Amount (KES)</label>
+            <input type="number" id="txAmount" class="form-control" placeholder="e.g. 50000" min="1">
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Account</label>
+            <select id="txAccount" class="form-control"></select>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Memo</label>
+            <input type="text" id="txMemo" class="form-control" placeholder="Invoice, vendor payout...">
+        </div>
+
+        <div class="modal-actions">
+            <button class="btn-close-modal" onclick="closeModal('txModal')">Cancel</button>
+            <button class="btn-submit" onclick="submitTransaction()">Add Transaction</button>
+        </div>
+    </div>
+</div>
+
+<!-- Add Account Modal -->
+<div class="modal-overlay" id="accountModal">
+    <div class="modal-content">
+        <div class="modal-title">Add Account</div>
+        
+        <div class="form-group">
+            <label class="form-label">Account Name</label>
+            <input type="text" id="accName" class="form-control" placeholder="e.g. Equity Bank">
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Initial Balance (KES)</label>
+            <input type="number" id="accBalance" class="form-control" placeholder="0" min="0">
+        </div>
+
+        <div class="modal-actions">
+            <button class="btn-close-modal" onclick="closeModal('accountModal')">Cancel</button>
+            <button class="btn-submit" onclick="submitAccount()">Add Account</button>
+        </div>
+    </div>
+</div>
+
+<!-- Add MRR Modal -->
+<div class="modal-overlay" id="mrrModal">
+    <div class="modal-content">
+        <div class="modal-title">Add MRR Tier</div>
+        
+        <div class="form-group">
+            <label class="form-label">Tier Name</label>
+            <input type="text" id="mrrName" class="form-control" placeholder="e.g. Premium">
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Monthly Recurring Revenue (KES)</label>
+            <input type="number" id="mrrAmount" class="form-control" placeholder="0" min="0">
+        </div>
+
+        <div class="modal-actions">
+            <button class="btn-close-modal" onclick="closeModal('mrrModal')">Cancel</button>
+            <button class="btn-submit" onclick="submitMRR()">Add MRR Tier</button>
+        </div>
+    </div>
+</div>
+
+<!-- Add Forecast Modal -->
+<div class="modal-overlay" id="forecastModal">
+    <div class="modal-content">
+        <div class="modal-title">Add Forecast Week</div>
+        
+        <div class="form-group">
+            <label class="form-label">Week Number</label>
+            <input type="number" id="forecastWeek" class="form-control" placeholder="1-52" min="1" max="52">
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Amount (KES)</label>
+            <input type="number" id="forecastAmount" class="form-control" placeholder="e.g. 150000">
+            <div style="font-size:11px;color:#64748b;margin-top:4px;">Positive = inflow, Negative = outflow</div>
+        </div>
+
+        <div class="modal-actions">
+            <button class="btn-close-modal" onclick="closeModal('forecastModal')">Cancel</button>
+            <button class="btn-submit" onclick="submitForecast()">Add Forecast</button>
         </div>
     </div>
 </div>
@@ -704,7 +1034,6 @@
 // AUTH SYSTEM
 // ============================================================
 
-// Users database (in production, this would be a backend)
 const usersDB = {
     'demo@finsight.com': {
         id: '1',
@@ -717,9 +1046,9 @@ const usersDB = {
     }
 };
 
-// Session management
 let currentUser = null;
 let authToken = null;
+let currentTxType = 'inflow';
 
 // ============================================================
 // AUTH FUNCTIONS
@@ -727,11 +1056,7 @@ let authToken = null;
 
 function togglePassword(inputId) {
     const input = document.getElementById(inputId);
-    if (input.type === 'password') {
-        input.type = 'text';
-    } else {
-        input.type = 'password';
-    }
+    input.type = input.type === 'password' ? 'text' : 'password';
 }
 
 function showLogin() {
@@ -771,26 +1096,14 @@ function checkPasswordStrength(password) {
     if (password.match(/[a-z]/)) strength += 25;
     if (password.match(/[A-Z]/)) strength += 25;
     if (password.match(/[0-9!@#$%^&*]/)) strength += 25;
-    
     bar.style.width = strength + '%';
-    if (strength < 50) {
-        bar.style.background = '#f87171';
-    } else if (strength < 75) {
-        bar.style.background = '#fbbf24';
-    } else {
-        bar.style.background = '#4ade80';
-    }
+    bar.style.background = strength < 50 ? '#f87171' : strength < 75 ? '#fbbf24' : '#4ade80';
 }
-
-// ============================================================
-// AUTH HANDLERS
-// ============================================================
 
 function handleLogin() {
     const email = document.getElementById('loginEmail').value.trim();
     const password = document.getElementById('loginPassword').value;
     let isValid = true;
-    
     clearErrors();
     
     if (!validateEmail(email)) {
@@ -798,38 +1111,25 @@ function handleLogin() {
         document.getElementById('loginEmail').classList.add('error');
         isValid = false;
     }
-    
     if (!password || password.length < 1) {
         document.getElementById('loginPasswordError').classList.add('show');
         document.getElementById('loginPassword').classList.add('error');
         isValid = false;
     }
-    
     if (!isValid) return;
     
-    // Check user
     const user = usersDB[email];
     if (!user || user.password !== password) {
         showToast('❌ Invalid email or password', 'error');
         return;
     }
     
-    // Login success
     currentUser = user;
     authToken = btoa(email + ':' + Date.now());
     user.lastLogin = new Date().toISOString();
-    
-    // Save session
-    localStorage.setItem('finsight_session', JSON.stringify({
-        user: user,
-        token: authToken,
-        expires: Date.now() + 86400000 // 24 hours
-    }));
-    
+    localStorage.setItem('finsight_session', JSON.stringify({ user, token: authToken, expires: Date.now() + 86400000 }));
     showToast('✅ Welcome back, ' + user.name + '!', 'success');
-    setTimeout(() => {
-        showDashboard();
-    }, 500);
+    setTimeout(() => showDashboard(), 500);
 }
 
 function handleRegister() {
@@ -838,7 +1138,6 @@ function handleRegister() {
     const password = document.getElementById('registerPassword').value;
     const confirm = document.getElementById('registerConfirm').value;
     let isValid = true;
-    
     clearErrors();
     
     if (!name || name.length < 2) {
@@ -846,63 +1145,52 @@ function handleRegister() {
         document.getElementById('registerName').classList.add('error');
         isValid = false;
     }
-    
     if (!validateEmail(email)) {
         document.getElementById('registerEmailError').classList.add('show');
         document.getElementById('registerEmail').classList.add('error');
         isValid = false;
     }
-    
     if (password.length < 8) {
         document.getElementById('registerPasswordError').classList.add('show');
         document.getElementById('registerPassword').classList.add('error');
         isValid = false;
     }
-    
     if (password !== confirm) {
         document.getElementById('registerConfirmError').classList.add('show');
         document.getElementById('registerConfirm').classList.add('error');
         isValid = false;
     }
-    
     if (!isValid) return;
     
-    // Check if user exists
     if (usersDB[email]) {
-        showToast('❌ User already exists with this email', 'error');
+        showToast('❌ User already exists', 'error');
         return;
     }
     
-    // Create user
     usersDB[email] = {
         id: Object.keys(usersDB).length + 1,
-        name: name,
-        email: email,
-        password: password,
+        name, email, password,
         role: 'user',
         created: new Date().toISOString(),
         lastLogin: null
     };
     
-    showToast('✅ Account created successfully! Please login.', 'success');
+    showToast('✅ Account created! Please login.', 'success');
     showLogin();
     document.getElementById('loginEmail').value = email;
 }
 
 function handleResetPassword() {
     const email = document.getElementById('resetEmail').value.trim();
-    
     if (!validateEmail(email)) {
         document.getElementById('resetEmailError').classList.add('show');
         document.getElementById('resetEmail').classList.add('error');
         return;
     }
-    
     if (!usersDB[email]) {
-        showToast('❌ No account found with this email', 'error');
+        showToast('❌ No account found', 'error');
         return;
     }
-    
     showToast('✅ Reset link sent to ' + email, 'success');
     setTimeout(() => showLogin(), 1000);
 }
@@ -913,12 +1201,8 @@ function handleLogout() {
     authToken = null;
     document.getElementById('dashboard').classList.remove('active');
     document.getElementById('authContainer').style.display = 'block';
-    showToast('👋 Signed out successfully', 'success');
+    showToast('👋 Signed out', 'success');
 }
-
-// ============================================================
-// SESSION CHECK
-// ============================================================
 
 function checkSession() {
     const session = localStorage.getItem('finsight_session');
@@ -930,37 +1214,15 @@ function checkSession() {
                 authToken = data.token;
                 showDashboard();
                 return true;
-            } else {
-                localStorage.removeItem('finsight_session');
             }
-        } catch(e) {
-            localStorage.removeItem('finsight_session');
-        }
+        } catch(e) {}
+        localStorage.removeItem('finsight_session');
     }
     return false;
 }
 
 // ============================================================
-// DASHBOARD LOGIC
-// ============================================================
-
-function showDashboard() {
-    document.getElementById('authContainer').style.display = 'none';
-    document.getElementById('dashboard').classList.add('active');
-    
-    // Update user badge
-    if (currentUser) {
-        document.getElementById('userName').textContent = currentUser.name;
-        document.getElementById('userAvatar').textContent = currentUser.name.charAt(0).toUpperCase();
-        document.getElementById('userRole').textContent = currentUser.role.charAt(0).toUpperCase() + currentUser.role.slice(1);
-    }
-    
-    // Initialize dashboard data
-    initializeDashboard();
-}
-
-// ============================================================
-// DASHBOARD STATE & FUNCTIONS
+// DASHBOARD STATE
 // ============================================================
 
 const dashboardState = {
@@ -981,6 +1243,11 @@ const dashboardState = {
         { name: 'PayPal Transit', balance: 198200 },
         { name: 'Local Ledger', balance: 101240 }
     ],
+    transactions: [
+        { id: 1, type: 'inflow', amount: 150000, account: 'M-Pesa B2C', memo: 'Client Payment - Invoice #123', timestamp: '2024-01-15 10:30' },
+        { id: 2, type: 'outflow', amount: 45000, account: 'KCB Corporate', memo: 'Vendor Payment - Supplies', timestamp: '2024-01-14 14:20' },
+        { id: 3, type: 'inflow', amount: 75000, account: 'PayPal Transit', memo: 'Subscription Revenue - Q1', timestamp: '2024-01-13 09:15' }
+    ],
     forecast: [
         { week: 1, amount: 142000 },
         { week: 2, amount: 89000 },
@@ -991,8 +1258,35 @@ const dashboardState = {
         { tier: 'Starter', total: 120500 },
         { tier: 'Growth', total: 245000 },
         { tier: 'Enterprise', total: 90270 }
-    ]
+    ],
+    nextTxId: 4
 };
+
+// ============================================================
+// PERSISTENCE
+// ============================================================
+
+function saveState() {
+    try { 
+        localStorage.setItem('finsight_dashboard_state', JSON.stringify(dashboardState));
+    } catch(e) {}
+}
+
+function loadState() {
+    try {
+        const saved = localStorage.getItem('finsight_dashboard_state');
+        if (saved) {
+            const parsed = JSON.parse(saved);
+            Object.assign(dashboardState, parsed);
+            return true;
+        }
+    } catch(e) {}
+    return false;
+}
+
+// ============================================================
+// CORE LOGIC
+// ============================================================
 
 function calculateMetrics() {
     dashboardState.balance = dashboardState.accounts.reduce((sum, acc) => sum + acc.balance, 0);
@@ -1004,7 +1298,274 @@ function calculateMetrics() {
     dashboardState.ebitda = Math.round(dashboardState.income * 0.55 - dashboardState.outcome * 0.45);
 }
 
-function updateDashboardUI() {
+function generateAIInsight() {
+    const margin = dashboardState.income - dashboardState.outcome;
+    const net = dashboardState.balance;
+    
+    if (margin < 0) {
+        return `⚠️ Negative net margin of KSh ${Math.abs(Math.round(margin)).toLocaleString()}. Runway at ${dashboardState.monthsLeft} months. Consider cost optimization.`;
+    }
+    if (net < 100000) {
+        return `⚠️ Low balance (KSh ${net.toLocaleString()}). Runway: ${dashboardState.monthsLeft} months. Review spending.`;
+    }
+    if (dashboardState.monthsLeft < 6) {
+        return `⚠️ Runway below 6 months (${dashboardState.monthsLeft}). Urgent capital injection needed.`;
+    }
+    return `✅ Healthy runway of ${dashboardState.monthsLeft} months. Income exceeds outcome by KSh ${Math.round(margin).toLocaleString()}. Growth at ${dashboardState.growthRate.toFixed(1)}% MoM.`;
+}
+
+// ============================================================
+// MODAL FUNCTIONS
+// ============================================================
+
+function openModal(id) {
+    document.getElementById(id).classList.add('active');
+}
+
+function closeModal(id) {
+    document.getElementById(id).classList.remove('active');
+}
+
+function openAddTransaction() {
+    const select = document.getElementById('txAccount');
+    select.innerHTML = '';
+    dashboardState.accounts.forEach((acc, idx) => {
+        select.innerHTML += `<option value="${idx}">${acc.name} (KSh ${acc.balance.toLocaleString()})</option>`;
+    });
+    document.getElementById('txAmount').value = '';
+    document.getElementById('txMemo').value = '';
+    setTxType('inflow');
+    openModal('txModal');
+}
+
+function setTxType(type) {
+    currentTxType = type;
+    document.querySelectorAll('#txModal .radio-btn').forEach(btn => {
+        btn.classList.toggle('selected', btn.dataset.type === type);
+    });
+}
+
+function submitTransaction() {
+    const amtEl = document.getElementById('txAmount');
+    const accEl = document.getElementById('txAccount');
+    const memoEl = document.getElementById('txMemo');
+    
+    const val = parseFloat(amtEl.value);
+    const accIdx = parseInt(accEl.value);
+    const memo = memoEl.value.trim() || 'Transaction';
+
+    if (isNaN(val) || val <= 0) {
+        showToast('❌ Please enter a valid amount', 'error');
+        return;
+    }
+
+    if (currentTxType === 'outflow' && dashboardState.accounts[accIdx].balance < val) {
+        showToast(`❌ Insufficient balance in ${dashboardState.accounts[accIdx].name}`, 'error');
+        return;
+    }
+
+    const tx = {
+        id: dashboardState.nextTxId++,
+        type: currentTxType,
+        amount: val,
+        account: dashboardState.accounts[accIdx].name,
+        memo: memo,
+        timestamp: new Date().toLocaleString()
+    };
+
+    if (currentTxType === 'inflow') {
+        dashboardState.accounts[accIdx].balance += val;
+        dashboardState.income += val;
+        dashboardState.ebitda += Math.round(val * 0.75);
+    } else {
+        dashboardState.accounts[accIdx].balance -= val;
+        dashboardState.outcome += val;
+        dashboardState.ebitda -= Math.round(val * 0.85);
+    }
+
+    dashboardState.transactions.unshift(tx);
+
+    if (currentTxType === 'inflow' && val > 10000) {
+        dashboardState.mrrTiers[0].total += Math.round(val * 0.2);
+        dashboardState.mrrTiers[1].total += Math.round(val * 0.5);
+        dashboardState.mrrTiers[2].total += Math.round(val * 0.3);
+    }
+
+    calculateMetrics();
+    saveState();
+    updateUI();
+    closeModal('txModal');
+    showToast(`✅ Added ${currentTxType.toUpperCase()} of KSh ${val.toLocaleString()}`, 'success');
+}
+
+function openAddAccount() {
+    document.getElementById('accName').value = '';
+    document.getElementById('accBalance').value = '';
+    openModal('accountModal');
+}
+
+function submitAccount() {
+    const name = document.getElementById('accName').value.trim();
+    const balance = parseFloat(document.getElementById('accBalance').value) || 0;
+
+    if (!name) {
+        showToast('❌ Please enter an account name', 'error');
+        return;
+    }
+
+    dashboardState.accounts.push({ name, balance });
+    calculateMetrics();
+    saveState();
+    updateUI();
+    closeModal('accountModal');
+    showToast(`✅ Added account: ${name}`, 'success');
+}
+
+function openAddMRR() {
+    document.getElementById('mrrName').value = '';
+    document.getElementById('mrrAmount').value = '';
+    openModal('mrrModal');
+}
+
+function submitMRR() {
+    const tier = document.getElementById('mrrName').value.trim();
+    const total = parseFloat(document.getElementById('mrrAmount').value) || 0;
+
+    if (!tier) {
+        showToast('❌ Please enter a tier name', 'error');
+        return;
+    }
+
+    dashboardState.mrrTiers.push({ tier, total });
+    saveState();
+    updateUI();
+    closeModal('mrrModal');
+    showToast(`✅ Added MRR tier: ${tier}`, 'success');
+}
+
+function openAddForecast() {
+    document.getElementById('forecastWeek').value = '';
+    document.getElementById('forecastAmount').value = '';
+    openModal('forecastModal');
+}
+
+function submitForecast() {
+    const week = parseInt(document.getElementById('forecastWeek').value);
+    const amount = parseFloat(document.getElementById('forecastAmount').value);
+
+    if (isNaN(week) || week < 1 || week > 52) {
+        showToast('❌ Please enter a valid week (1-52)', 'error');
+        return;
+    }
+    if (isNaN(amount)) {
+        showToast('❌ Please enter a valid amount', 'error');
+        return;
+    }
+
+    dashboardState.forecast.push({ week, amount });
+    // Sort by week
+    dashboardState.forecast.sort((a, b) => a.week - b.week);
+    // Keep only last 4
+    if (dashboardState.forecast.length > 4) {
+        dashboardState.forecast = dashboardState.forecast.slice(-4);
+    }
+    saveState();
+    updateUI();
+    closeModal('forecastModal');
+    showToast(`✅ Added forecast for week ${week}`, 'success');
+}
+
+// ============================================================
+// DELETE FUNCTIONS
+// ============================================================
+
+function deleteAccount(index) {
+    if (dashboardState.accounts.length <= 1) {
+        showToast('❌ Cannot delete last account', 'error');
+        return;
+    }
+    if (confirm(`Delete account "${dashboardState.accounts[index].name}"?`)) {
+        const removed = dashboardState.accounts.splice(index, 1)[0];
+        calculateMetrics();
+        saveState();
+        updateUI();
+        showToast(`🗑️ Deleted account: ${removed.name}`, 'success');
+    }
+}
+
+function deleteTransaction(index) {
+    if (confirm(`Delete transaction "${dashboardState.transactions[index].memo}"?`)) {
+        const tx = dashboardState.transactions.splice(index, 1)[0];
+        if (tx.type === 'inflow') {
+            dashboardState.income -= tx.amount;
+            dashboardState.ebitda -= Math.round(tx.amount * 0.75);
+            const acc = dashboardState.accounts.find(a => a.name === tx.account);
+            if (acc) acc.balance -= tx.amount;
+        } else {
+            dashboardState.outcome -= tx.amount;
+            dashboardState.ebitda += Math.round(tx.amount * 0.85);
+            const acc = dashboardState.accounts.find(a => a.name === tx.account);
+            if (acc) acc.balance += tx.amount;
+        }
+        calculateMetrics();
+        saveState();
+        updateUI();
+        showToast(`🗑️ Deleted transaction: ${tx.memo}`, 'success');
+    }
+}
+
+function deleteMRR(index) {
+    if (dashboardState.mrrTiers.length <= 1) {
+        showToast('❌ Cannot delete last MRR tier', 'error');
+        return;
+    }
+    if (confirm(`Delete MRR tier "${dashboardState.mrrTiers[index].tier}"?`)) {
+        const removed = dashboardState.mrrTiers.splice(index, 1)[0];
+        saveState();
+        updateUI();
+        showToast(`🗑️ Deleted MRR tier: ${removed.tier}`, 'success');
+    }
+}
+
+function deleteForecast(index) {
+    if (confirm(`Delete forecast for week ${dashboardState.forecast[index].week}?`)) {
+        dashboardState.forecast.splice(index, 1);
+        saveState();
+        updateUI();
+        showToast(`🗑️ Deleted forecast`, 'success');
+    }
+}
+
+function clearAllTransactions() {
+    if (dashboardState.transactions.length === 0) {
+        showToast('No transactions to clear', 'info');
+        return;
+    }
+    if (confirm(`Delete all ${dashboardState.transactions.length} transactions?`)) {
+        dashboardState.transactions.forEach(tx => {
+            if (tx.type === 'inflow') {
+                dashboardState.income -= tx.amount;
+                const acc = dashboardState.accounts.find(a => a.name === tx.account);
+                if (acc) acc.balance -= tx.amount;
+            } else {
+                dashboardState.outcome -= tx.amount;
+                const acc = dashboardState.accounts.find(a => a.name === tx.account);
+                if (acc) acc.balance += tx.amount;
+            }
+        });
+        dashboardState.transactions = [];
+        calculateMetrics();
+        saveState();
+        updateUI();
+        showToast('🗑️ All transactions cleared', 'success');
+    }
+}
+
+// ============================================================
+// UI UPDATE
+// ============================================================
+
+function updateUI() {
     document.getElementById('totalBalance').textContent = `KSh ${Math.round(dashboardState.balance).toLocaleString()}`;
     document.getElementById('ebitda').textContent = `KSh ${Math.round(dashboardState.ebitda).toLocaleString()}`;
     document.getElementById('income').textContent = `KSh ${Math.round(dashboardState.income).toLocaleString()}`;
@@ -1015,37 +1576,69 @@ function updateDashboardUI() {
     document.getElementById('userChange').textContent = `▲ ${dashboardState.userGrowth.toFixed(1)}%`;
     document.getElementById('cashOutDate').textContent = dashboardState.cashOutDate;
     document.getElementById('monthsLeft').textContent = `~${dashboardState.monthsLeft} mo`;
+    document.getElementById('aiText').textContent = generateAIInsight();
 
     // Accounts
     const accountContainer = document.getElementById('accountList');
     accountContainer.innerHTML = '';
-    dashboardState.accounts.forEach(acc => {
+    dashboardState.accounts.forEach((acc, idx) => {
         const chip = document.createElement('span');
         chip.className = 'account-chip';
-        chip.innerHTML = `🏦 ${acc.name} <span class="bal">KSh ${Math.round(acc.balance).toLocaleString()}</span>`;
+        chip.innerHTML = `🏦 ${acc.name} <span class="bal">KSh ${Math.round(acc.balance).toLocaleString()}</span>
+            <button class="del-account" onclick="deleteAccount(${idx})">✕</button>`;
         accountContainer.appendChild(chip);
     });
+
+    // Transactions
+    const txContainer = document.getElementById('txHistory');
+    txContainer.innerHTML = '';
+    if (dashboardState.transactions.length === 0) {
+        txContainer.innerHTML = '<div style="text-align:center;color:#475569;padding:12px;font-size:13px;">No transactions</div>';
+    } else {
+        dashboardState.transactions.slice(0, 20).forEach((tx, idx) => {
+            const div = document.createElement('div');
+            div.className = 'tx-item';
+            div.innerHTML = `
+                <div class="tx-info">
+                    <span style="font-size:13px;font-weight:500;">${tx.memo}</span>
+                    <span class="tx-account">${tx.account} · ${tx.timestamp}</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <span class="tx-amount ${tx.type}">${tx.type === 'inflow' ? '+' : '-'} KSh ${Math.round(tx.amount).toLocaleString()}</span>
+                    <button class="del-tx" onclick="deleteTransaction(${idx})">✕</button>
+                </div>
+            `;
+            txContainer.appendChild(div);
+        });
+    }
 
     // MRR
     const mrrContainer = document.getElementById('mrrGrid');
     mrrContainer.innerHTML = '';
-    dashboardState.mrrTiers.forEach(tier => {
+    dashboardState.mrrTiers.forEach((tier, idx) => {
         const item = document.createElement('div');
         item.className = 'mmr-item';
-        item.innerHTML = `<div class="tier-lbl">${tier.tier}</div><div class="val">KSh ${Math.round(tier.total).toLocaleString()}</div>`;
+        item.innerHTML = `
+            <div class="tier-lbl">${tier.tier}</div>
+            <div class="val">KSh ${Math.round(tier.total).toLocaleString()}</div>
+            <button class="del-mmr" onclick="deleteMRR(${idx})">✕</button>
+        `;
         mrrContainer.appendChild(item);
     });
 
     // Forecast
-    const forecastEls = document.querySelectorAll('.forecast-item .amount');
+    const forecastEls = document.querySelectorAll('.forecast-item');
     let totalForecast = 0;
     dashboardState.forecast.forEach((f, idx) => {
         if (forecastEls[idx]) {
             const factor = dashboardState.scenario === 'optimistic' ? 1.4 : (dashboardState.scenario === 'pessimistic' ? 0.6 : 1.0);
             const amount = Math.round(f.amount * factor);
             totalForecast += amount;
-            forecastEls[idx].textContent = `${amount >= 0 ? '+' : ''}KSh ${Math.round(amount/1000)}k`;
-            forecastEls[idx].style.color = amount >= 0 ? '#4ade80' : '#f87171';
+            forecastEls[idx].innerHTML = `
+                <div class="week">Week ${f.week}</div>
+                <div class="amount" style="color:${amount >= 0 ? '#4ade80' : '#f87171'}">${amount >= 0 ? '+' : ''}KSh ${Math.round(amount/1000)}k</div>
+                <button class="del-forecast" onclick="deleteForecast(${idx})">✕</button>
+            `;
         }
     });
 
@@ -1057,11 +1650,9 @@ function updateDashboardUI() {
     riskBox.className = dashboardState.riskAmount > dashboardState.balance ? 'risk-box' : 'risk-box safe';
 }
 
-function initializeDashboard() {
-    calculateMetrics();
-    updateDashboardUI();
-    document.getElementById('aiText').textContent = `Welcome back, ${currentUser.name}! Your runway is ${dashboardState.monthsLeft} months. Growth at ${dashboardState.growthRate.toFixed(1)}% MoM.`;
-}
+// ============================================================
+// SCENARIO ENGINE
+// ============================================================
 
 function applyScenario(scenario) {
     dashboardState.scenario = scenario;
@@ -1087,9 +1678,14 @@ function applyScenario(scenario) {
     dashboardState.accounts[3].balance = Math.round(101240 * m.inc);
 
     calculateMetrics();
-    updateDashboardUI();
+    saveState();
+    updateUI();
     showToast(`📊 Scenario: ${scenario.toUpperCase()}`, 'success');
 }
+
+// ============================================================
+// SHORTCUTS
+// ============================================================
 
 function quickTransfer(target, defaultAmount) {
     let amount = defaultAmount;
@@ -1105,8 +1701,17 @@ function quickTransfer(target, defaultAmount) {
     if (dashboardState.accounts[0].balance >= amount) {
         dashboardState.accounts[0].balance -= amount;
         dashboardState.outcome += amount;
+        dashboardState.transactions.unshift({
+            id: dashboardState.nextTxId++,
+            type: 'outflow',
+            amount: amount,
+            account: dashboardState.accounts[0].name,
+            memo: `Transfer to ${target}`,
+            timestamp: new Date().toLocaleString()
+        });
         calculateMetrics();
-        updateDashboardUI();
+        saveState();
+        updateUI();
         showToast(`✅ KSh ${amount.toLocaleString()} sent to ${target}`, 'success');
     } else {
         showToast('❌ Insufficient balance', 'error');
@@ -1129,34 +1734,48 @@ function showToast(message, type = 'info') {
 }
 
 // ============================================================
+// DASHBOARD
+// ============================================================
+
+function showDashboard() {
+    document.getElementById('authContainer').style.display = 'none';
+    document.getElementById('dashboard').classList.add('active');
+    if (currentUser) {
+        document.getElementById('userName').textContent = currentUser.name;
+        document.getElementById('userAvatar').textContent = currentUser.name.charAt(0).toUpperCase();
+        document.getElementById('userRole').textContent = currentUser.role.charAt(0).toUpperCase() + currentUser.role.slice(1);
+    }
+    loadState();
+    calculateMetrics();
+    updateUI();
+}
+
+// ============================================================
+// AUTO REFRESH
+// ============================================================
+
+function autoRefresh() {
+    const variance = 1 + (Math.random() * 0.002 - 0.001);
+    dashboardState.accounts.forEach(acc => acc.balance = Math.round(acc.balance * variance));
+    calculateMetrics();
+    updateUI();
+}
+
+// ============================================================
 // INIT
 // ============================================================
 
-// Check for existing session
 if (!checkSession()) {
     document.getElementById('authContainer').style.display = 'block';
     document.getElementById('dashboard').classList.remove('active');
 }
 
-// Pre-fill demo credentials
-document.getElementById('loginEmail').value = 'demo@finsight.com';
-document.getElementById('loginPassword').value = 'Demo@123';
+setInterval(autoRefresh, 15000);
+window.addEventListener('beforeunload', saveState);
 
-console.log('🔐 FinSight Pro · Secure Authentication System');
+console.log('🔐 FinSight Pro · Enterprise Suite with Manual Data Entry');
 console.log('👤 Demo: demo@finsight.com / Demo@123');
-
-// Service Worker
-if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('data:application/javascript,' + encodeURIComponent(`
-        self.addEventListener('install', e => e.waitUntil(skipWaiting()));
-        self.addEventListener('activate', e => e.waitUntil(clients.claim()));
-        self.addEventListener('fetch', e => {
-            e.respondWith(
-                fetch(e.request).catch(() => new Response('🚀 FinSight Pro Offline', { status: 503 }))
-            );
-        });
-    `)).catch(() => {});
-}
+console.log('📊 Features: Add/Delete Accounts, Transactions, MRR, Forecast');
 </script>
 </body>
 </html>
