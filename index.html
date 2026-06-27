@@ -7,7 +7,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <link rel="manifest" href="data:application/json,{"name":"FinSight Pro","short_name":"FinSight","start_url":".","display":"standalone","background_color":"#0f172a","theme_color":"#0f172a","icons":[{"src":"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%233b82f6'/%3E%3Ctext x='50' y='68' font-size='52' text-anchor='middle' fill='white' font-family='sans-serif'%3E%26%23x20B9;%3C/text%3E%3C/svg%3E","sizes":"192x192","type":"image/svg+xml"}]}" />
-    <title>FinSight Pro · Enterprise Suite</title>
+    <title>FinSight Pro · Manual Control</title>
     <style>
         :root {
             --glass-bg: rgba(19, 30, 47, 0.7);
@@ -276,6 +276,19 @@
         }
         .btn-primary-small:hover { opacity: 0.9; transform: translateY(-1px); }
         
+        .btn-edit {
+            background: rgba(251, 191, 36, 0.2);
+            border: 1px solid rgba(251, 191, 36, 0.3);
+            color: #fbbf24;
+            padding: 2px 10px;
+            border-radius: 40px;
+            font-size: 10px;
+            cursor: pointer;
+            transition: 0.2s;
+            font-weight: 600;
+        }
+        .btn-edit:hover { background: rgba(251, 191, 36, 0.3); }
+        
         .card {
             background: var(--glass-bg);
             backdrop-filter: blur(12px);
@@ -305,6 +318,25 @@
             margin-top: 4px;
             letter-spacing: -0.5px;
             color: #f8fafc;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .card-value .edit-input {
+            background: rgba(7, 11, 20, 0.6);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            padding: 4px 10px;
+            color: white;
+            font-size: 16px;
+            font-weight: 700;
+            width: 120px;
+            text-align: right;
+        }
+        .card-value .edit-input:focus {
+            outline: none;
+            border-color: var(--primary);
         }
         .card-change {
             font-size: 11px;
@@ -356,6 +388,15 @@
             padding: 0 2px;
         }
         .account-chip .del-account:hover { color: #ef4444; transform: scale(1.2); }
+        .account-chip .edit-account {
+            background: none;
+            border: none;
+            color: #fbbf24;
+            cursor: pointer;
+            font-size: 12px;
+            padding: 0 2px;
+        }
+        .account-chip .edit-account:hover { color: #f59e0b; transform: scale(1.2); }
         
         /* Risk Box */
         .risk-box {
@@ -458,6 +499,24 @@
             transition: 0.2s;
         }
         .mmr-item .del-mmr:hover { transform: scale(1.2); background: #dc2626; }
+        .mmr-item .edit-mmr {
+            position: absolute;
+            top: -6px;
+            left: -6px;
+            background: rgba(251, 191, 36, 0.9);
+            color: white;
+            border: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
+        }
+        .mmr-item .edit-mmr:hover { transform: scale(1.2); background: #f59e0b; }
         
         /* Transactions */
         .tx-history {
@@ -504,6 +563,7 @@
             border-radius: 12px;
             text-align: center;
             border: 1px solid rgba(51, 65, 85, 0.2);
+            position: relative;
         }
         .forecast-item .week { font-size: 10px; color: #64748b; font-weight: 600; margin-bottom: 2px; }
         .forecast-item .amount { font-size: 13px; font-weight: 700; }
@@ -516,6 +576,16 @@
             margin-top: 2px;
         }
         .forecast-item .del-forecast:hover { color: #ef4444; }
+        .forecast-item .edit-forecast {
+            background: none;
+            border: none;
+            color: #fbbf24;
+            cursor: pointer;
+            font-size: 10px;
+            margin-top: 2px;
+            margin-right: 4px;
+        }
+        .forecast-item .edit-forecast:hover { color: #f59e0b; }
         
         .progress-bar {
             width: 100%;
@@ -680,6 +750,7 @@
             .shortcut-grid { grid-template-columns: 1fr; }
             .forecast-grid { grid-template-columns: 1fr 1fr; }
             .mmr-box { grid-template-columns: 1fr; }
+            .card-value .edit-input { width: 80px; font-size: 14px; }
         }
     </style>
 </head>
@@ -797,10 +868,11 @@
         
         <!-- Action Buttons -->
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
-            <button class="btn-primary-small" onclick="openAddTransaction()">➕ Add Transaction</button>
+            <button class="btn-primary-small" onclick="openAddTransaction()">➕ Add TX</button>
             <button class="btn-primary-small" onclick="openAddAccount()">🏦 Add Account</button>
-            <button class="btn-primary-small" onclick="openAddMRR()">📊 Add MRR Tier</button>
+            <button class="btn-primary-small" onclick="openAddMRR()">📊 Add MRR</button>
             <button class="btn-primary-small" onclick="openAddForecast()">📈 Add Forecast</button>
+            <button class="btn-primary-small" style="background:linear-gradient(135deg,#f59e0b,#d97706);" onclick="openEditBalance()">✏️ Edit Balance</button>
         </div>
         
         <!-- AI Insight -->
@@ -815,18 +887,49 @@
                 <span class="card-label">Total Balance (KES)</span>
                 <span class="scenario-badge" onclick="applyScenario('base')">📊 Reset</span>
             </div>
-            <div class="card-value big-number" id="totalBalance">KSh 0</div>
-            <span class="card-change positive">▲ 73.3%</span>
+            <div class="card-value big-number" id="totalBalanceDisplay">KSh 0</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px;">
+                <span class="card-change positive">▲ 73.3%</span>
+                <button class="btn-edit" onclick="openEditBalance()">✏️ Edit</button>
+            </div>
         </div>
         
         <!-- Grid -->
         <div class="grid-2">
-            <div class="card"><div class="card-label">EBITDA</div><div class="card-value" id="ebitda">KSh 0</div><span class="card-change positive">▲ 5.3%</span></div>
-            <div class="card"><div class="card-label">Income</div><div class="card-value" id="income">KSh 0</div><span class="card-change positive">▲ 11.2%</span></div>
+            <div class="card">
+                <div class="flex-between">
+                    <span class="card-label">EBITDA</span>
+                    <button class="btn-edit" onclick="openEditMetric('ebitda')">✏️</button>
+                </div>
+                <div class="card-value" id="ebitda">KSh 0</div>
+                <span class="card-change positive">▲ 5.3%</span>
+            </div>
+            <div class="card">
+                <div class="flex-between">
+                    <span class="card-label">Income</span>
+                    <button class="btn-edit" onclick="openEditMetric('income')">✏️</button>
+                </div>
+                <div class="card-value" id="income">KSh 0</div>
+                <span class="card-change positive">▲ 11.2%</span>
+            </div>
         </div>
         <div class="grid-2">
-            <div class="card"><div class="card-label">Outcome</div><div class="card-value" style="color:#f87171;" id="outcome">- KSh 0</div><span class="card-change negative">▼ 1.3%</span></div>
-            <div class="card"><div class="card-label">Growth Rate</div><div class="card-value" style="color:#4ade80;" id="growthRate">9.56%</div><span class="card-change positive">▲ 2.2%</span></div>
+            <div class="card">
+                <div class="flex-between">
+                    <span class="card-label">Outcome</span>
+                    <button class="btn-edit" onclick="openEditMetric('outcome')">✏️</button>
+                </div>
+                <div class="card-value" style="color:#f87171;" id="outcome">- KSh 0</div>
+                <span class="card-change negative">▼ 1.3%</span>
+            </div>
+            <div class="card">
+                <div class="flex-between">
+                    <span class="card-label">Growth Rate</span>
+                    <button class="btn-edit" onclick="openEditMetric('growthRate')">✏️</button>
+                </div>
+                <div class="card-value" style="color:#4ade80;" id="growthRate">9.56%</div>
+                <span class="card-change positive">▲ 2.2%</span>
+            </div>
         </div>
         
         <hr class="divider" />
@@ -835,7 +938,7 @@
         <div style="margin-bottom:12px;">
             <div class="flex-between">
                 <span class="card-label">Accounts</span>
-                <span style="font-size:11px;color:#64748b;">Click ✕ to delete</span>
+                <span style="font-size:11px;color:#64748b;">✏️ Edit | ✕ Delete</span>
             </div>
             <div class="account-row" id="accountList"></div>
         </div>
@@ -846,7 +949,7 @@
         <div style="margin:12px 0;">
             <div class="flex-between">
                 <span class="card-label">📋 Transaction History</span>
-                <span style="font-size:11px;color:#64748b;">Click ✕ to delete</span>
+                <span style="font-size:11px;color:#64748b;">✕ Delete</span>
             </div>
             <div class="tx-history" id="txHistory"></div>
         </div>
@@ -857,7 +960,7 @@
         <div style="background:rgba(15,26,43,0.4);border-radius:20px;padding:14px;border:1px solid var(--glass-border);">
             <div class="flex-between">
                 <span class="card-label">📈 4-Week Forecast</span>
-                <span style="font-size:11px;color:#64748b;">Click ✕ to delete</span>
+                <span style="font-size:11px;color:#64748b;">✏️ Edit | ✕ Delete</span>
             </div>
             <div class="forecast-grid" id="forecastGrid">
                 <div class="forecast-item"><div class="week">Week 1</div><div class="amount">...</div></div>
@@ -878,9 +981,10 @@
         <div class="card" style="margin:12px 0;">
             <div class="flex-between">
                 <span class="card-label">👥 New Users</span>
-                <span class="card-change positive" id="userChange">▲ 30.3%</span>
+                <button class="btn-edit" onclick="openEditMetric('newUsers')">✏️</button>
             </div>
             <div class="card-value" style="font-size:28px;" id="newUsers">14,833</div>
+            <span class="card-change positive" id="userChange">▲ 30.3%</span>
         </div>
         
         <!-- Shortcuts -->
@@ -902,7 +1006,7 @@
         <div style="margin:16px 0 4px;">
             <div class="flex-between">
                 <span class="card-label">📊 MRR Tiers</span>
-                <span style="font-size:11px;color:#64748b;">Click ✕ to delete</span>
+                <span style="font-size:11px;color:#64748b;">✏️ Edit | ✕ Delete</span>
             </div>
         </div>
         <div class="mmr-box" id="mrrGrid"></div>
@@ -917,12 +1021,57 @@
         
         <div class="footer-meta">
             FinSight Pro · Enterprise Suite<br>
-            <span>All data auto-saves · Click ✕ to delete items</span>
+            <span>Click ✏️ to edit any value · ✕ to delete · Auto-saves</span>
         </div>
     </div>
 </div>
 
 <!-- ==================== MODALS ==================== -->
+
+<!-- Edit Balance Modal -->
+<div class="modal-overlay" id="balanceModal">
+    <div class="modal-content">
+        <div class="modal-title">✏️ Edit Total Balance</div>
+        <div class="modal-subtitle">Manually set the total balance across all accounts</div>
+        
+        <div class="form-group">
+            <label class="form-label">New Total Balance (KES)</label>
+            <input type="number" id="editBalanceInput" class="form-control" placeholder="Enter new balance" min="0">
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Distribution Method</label>
+            <div class="form-radio-group">
+                <div class="radio-btn selected" data-type="equal" onclick="setDistribution('equal')">Equal Split</div>
+                <div class="radio-btn" data-type="proportional" onclick="setDistribution('proportional')">Proportional</div>
+            </div>
+            <div style="font-size:11px;color:#64748b;margin-top:4px;">Equal: spreads balance evenly across accounts</div>
+        </div>
+
+        <div class="modal-actions">
+            <button class="btn-close-modal" onclick="closeModal('balanceModal')">Cancel</button>
+            <button class="btn-submit" onclick="submitBalanceEdit()">Update Balance</button>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Metric Modal -->
+<div class="modal-overlay" id="metricModal">
+    <div class="modal-content">
+        <div class="modal-title">✏️ Edit Metric</div>
+        <div class="modal-subtitle" id="metricModalSubtitle">Edit the value</div>
+        
+        <div class="form-group">
+            <label class="form-label" id="metricLabel">New Value</label>
+            <input type="number" id="editMetricInput" class="form-control" placeholder="Enter new value" step="0.01">
+        </div>
+
+        <div class="modal-actions">
+            <button class="btn-close-modal" onclick="closeModal('metricModal')">Cancel</button>
+            <button class="btn-submit" onclick="submitMetricEdit()">Update</button>
+        </div>
+    </div>
+</div>
 
 <!-- Add Transaction Modal -->
 <div class="modal-overlay" id="txModal">
@@ -981,6 +1130,28 @@
     </div>
 </div>
 
+<!-- Edit Account Modal -->
+<div class="modal-overlay" id="editAccountModal">
+    <div class="modal-content">
+        <div class="modal-title">✏️ Edit Account</div>
+        
+        <div class="form-group">
+            <label class="form-label">Account Name</label>
+            <input type="text" id="editAccName" class="form-control">
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Balance (KES)</label>
+            <input type="number" id="editAccBalance" class="form-control" min="0">
+        </div>
+
+        <div class="modal-actions">
+            <button class="btn-close-modal" onclick="closeModal('editAccountModal')">Cancel</button>
+            <button class="btn-submit" onclick="submitEditAccount()">Update Account</button>
+        </div>
+    </div>
+</div>
+
 <!-- Add MRR Modal -->
 <div class="modal-overlay" id="mrrModal">
     <div class="modal-content">
@@ -999,6 +1170,28 @@
         <div class="modal-actions">
             <button class="btn-close-modal" onclick="closeModal('mrrModal')">Cancel</button>
             <button class="btn-submit" onclick="submitMRR()">Add MRR Tier</button>
+        </div>
+    </div>
+</div>
+
+<!-- Edit MRR Modal -->
+<div class="modal-overlay" id="editMRRModal">
+    <div class="modal-content">
+        <div class="modal-title">✏️ Edit MRR Tier</div>
+        
+        <div class="form-group">
+            <label class="form-label">Tier Name</label>
+            <input type="text" id="editMRRName" class="form-control">
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Monthly Recurring Revenue (KES)</label>
+            <input type="number" id="editMRRAmount" class="form-control" min="0">
+        </div>
+
+        <div class="modal-actions">
+            <button class="btn-close-modal" onclick="closeModal('editMRRModal')">Cancel</button>
+            <button class="btn-submit" onclick="submitEditMRR()">Update MRR</button>
         </div>
     </div>
 </div>
@@ -1026,6 +1219,28 @@
     </div>
 </div>
 
+<!-- Edit Forecast Modal -->
+<div class="modal-overlay" id="editForecastModal">
+    <div class="modal-content">
+        <div class="modal-title">✏️ Edit Forecast</div>
+        
+        <div class="form-group">
+            <label class="form-label">Week Number</label>
+            <input type="number" id="editForecastWeek" class="form-control" min="1" max="52">
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Amount (KES)</label>
+            <input type="number" id="editForecastAmount" class="form-control">
+        </div>
+
+        <div class="modal-actions">
+            <button class="btn-close-modal" onclick="closeModal('editForecastModal')">Cancel</button>
+            <button class="btn-submit" onclick="submitEditForecast()">Update Forecast</button>
+        </div>
+    </div>
+</div>
+
 <!-- Toast -->
 <div class="toast" id="toast"></div>
 
@@ -1049,6 +1264,11 @@ const usersDB = {
 let currentUser = null;
 let authToken = null;
 let currentTxType = 'inflow';
+let currentEditMetric = null;
+let currentEditAccountIndex = null;
+let currentEditMRRIndex = null;
+let currentEditForecastIndex = null;
+let currentDistribution = 'equal';
 
 // ============================================================
 // AUTH FUNCTIONS
@@ -1315,6 +1535,219 @@ function generateAIInsight() {
 }
 
 // ============================================================
+// EDIT FUNCTIONS - TOTAL BALANCE
+// ============================================================
+
+function openEditBalance() {
+    document.getElementById('editBalanceInput').value = Math.round(dashboardState.balance);
+    setDistribution('equal');
+    openModal('balanceModal');
+}
+
+function setDistribution(type) {
+    currentDistribution = type;
+    document.querySelectorAll('#balanceModal .radio-btn').forEach(btn => {
+        btn.classList.toggle('selected', btn.dataset.type === type);
+    });
+}
+
+function submitBalanceEdit() {
+    const newBalance = parseFloat(document.getElementById('editBalanceInput').value);
+    if (isNaN(newBalance) || newBalance < 0) {
+        showToast('❌ Please enter a valid balance', 'error');
+        return;
+    }
+
+    const currentTotal = dashboardState.balance;
+    if (currentTotal === 0) {
+        // If current total is 0, distribute equally
+        const perAccount = newBalance / dashboardState.accounts.length;
+        dashboardState.accounts.forEach(acc => acc.balance = Math.round(perAccount));
+    } else if (currentDistribution === 'equal') {
+        // Equal distribution
+        const perAccount = newBalance / dashboardState.accounts.length;
+        dashboardState.accounts.forEach(acc => acc.balance = Math.round(perAccount));
+    } else {
+        // Proportional distribution based on current balances
+        dashboardState.accounts.forEach(acc => {
+            const ratio = acc.balance / currentTotal;
+            acc.balance = Math.round(newBalance * ratio);
+        });
+    }
+
+    calculateMetrics();
+    saveState();
+    updateUI();
+    closeModal('balanceModal');
+    showToast(`✅ Balance updated to KSh ${newBalance.toLocaleString()}`, 'success');
+}
+
+// ============================================================
+// EDIT FUNCTIONS - METRICS
+// ============================================================
+
+function openEditMetric(metric) {
+    currentEditMetric = metric;
+    const labels = {
+        ebitda: 'EBITDA (KES)',
+        income: 'Income (KES)',
+        outcome: 'Outcome (KES)',
+        growthRate: 'Growth Rate (%)',
+        newUsers: 'New Users'
+    };
+    const values = {
+        ebitda: dashboardState.ebitda,
+        income: dashboardState.income,
+        outcome: dashboardState.outcome,
+        growthRate: dashboardState.growthRate,
+        newUsers: dashboardState.newUsers
+    };
+    
+    document.getElementById('metricModalSubtitle').textContent = `Edit ${labels[metric]}`;
+    document.getElementById('metricLabel').textContent = labels[metric];
+    document.getElementById('editMetricInput').value = values[metric];
+    openModal('metricModal');
+}
+
+function submitMetricEdit() {
+    const value = parseFloat(document.getElementById('editMetricInput').value);
+    if (isNaN(value) || value < 0) {
+        showToast('❌ Please enter a valid value', 'error');
+        return;
+    }
+
+    switch(currentEditMetric) {
+        case 'ebitda':
+            dashboardState.ebitda = value;
+            break;
+        case 'income':
+            dashboardState.income = value;
+            break;
+        case 'outcome':
+            dashboardState.outcome = value;
+            break;
+        case 'growthRate':
+            dashboardState.growthRate = value;
+            break;
+        case 'newUsers':
+            dashboardState.newUsers = Math.round(value);
+            break;
+        default:
+            showToast('❌ Invalid metric', 'error');
+            return;
+    }
+
+    calculateMetrics();
+    saveState();
+    updateUI();
+    closeModal('metricModal');
+    showToast(`✅ Updated ${currentEditMetric}`, 'success');
+}
+
+// ============================================================
+// EDIT FUNCTIONS - ACCOUNTS
+// ============================================================
+
+function editAccount(index) {
+    currentEditAccountIndex = index;
+    document.getElementById('editAccName').value = dashboardState.accounts[index].name;
+    document.getElementById('editAccBalance').value = dashboardState.accounts[index].balance;
+    openModal('editAccountModal');
+}
+
+function submitEditAccount() {
+    const name = document.getElementById('editAccName').value.trim();
+    const balance = parseFloat(document.getElementById('editAccBalance').value);
+    
+    if (!name) {
+        showToast('❌ Please enter an account name', 'error');
+        return;
+    }
+    if (isNaN(balance) || balance < 0) {
+        showToast('❌ Please enter a valid balance', 'error');
+        return;
+    }
+
+    dashboardState.accounts[currentEditAccountIndex].name = name;
+    dashboardState.accounts[currentEditAccountIndex].balance = balance;
+    
+    calculateMetrics();
+    saveState();
+    updateUI();
+    closeModal('editAccountModal');
+    showToast(`✅ Updated account: ${name}`, 'success');
+}
+
+// ============================================================
+// EDIT FUNCTIONS - MRR
+// ============================================================
+
+function editMRR(index) {
+    currentEditMRRIndex = index;
+    document.getElementById('editMRRName').value = dashboardState.mrrTiers[index].tier;
+    document.getElementById('editMRRAmount').value = dashboardState.mrrTiers[index].total;
+    openModal('editMRRModal');
+}
+
+function submitEditMRR() {
+    const tier = document.getElementById('editMRRName').value.trim();
+    const total = parseFloat(document.getElementById('editMRRAmount').value);
+    
+    if (!tier) {
+        showToast('❌ Please enter a tier name', 'error');
+        return;
+    }
+    if (isNaN(total) || total < 0) {
+        showToast('❌ Please enter a valid amount', 'error');
+        return;
+    }
+
+    dashboardState.mrrTiers[currentEditMRRIndex].tier = tier;
+    dashboardState.mrrTiers[currentEditMRRIndex].total = total;
+    
+    saveState();
+    updateUI();
+    closeModal('editMRRModal');
+    showToast(`✅ Updated MRR tier: ${tier}`, 'success');
+}
+
+// ============================================================
+// EDIT FUNCTIONS - FORECAST
+// ============================================================
+
+function editForecast(index) {
+    currentEditForecastIndex = index;
+    document.getElementById('editForecastWeek').value = dashboardState.forecast[index].week;
+    document.getElementById('editForecastAmount').value = dashboardState.forecast[index].amount;
+    openModal('editForecastModal');
+}
+
+function submitEditForecast() {
+    const week = parseInt(document.getElementById('editForecastWeek').value);
+    const amount = parseFloat(document.getElementById('editForecastAmount').value);
+    
+    if (isNaN(week) || week < 1 || week > 52) {
+        showToast('❌ Please enter a valid week (1-52)', 'error');
+        return;
+    }
+    if (isNaN(amount)) {
+        showToast('❌ Please enter a valid amount', 'error');
+        return;
+    }
+
+    dashboardState.forecast[currentEditForecastIndex].week = week;
+    dashboardState.forecast[currentEditForecastIndex].amount = amount;
+    
+    // Resort
+    dashboardState.forecast.sort((a, b) => a.week - b.week);
+    
+    saveState();
+    updateUI();
+    closeModal('editForecastModal');
+    showToast(`✅ Updated forecast for week ${week}`, 'success');
+}
+
+// ============================================================
 // MODAL FUNCTIONS
 // ============================================================
 
@@ -1463,9 +1896,7 @@ function submitForecast() {
     }
 
     dashboardState.forecast.push({ week, amount });
-    // Sort by week
     dashboardState.forecast.sort((a, b) => a.week - b.week);
-    // Keep only last 4
     if (dashboardState.forecast.length > 4) {
         dashboardState.forecast = dashboardState.forecast.slice(-4);
     }
@@ -1536,37 +1967,12 @@ function deleteForecast(index) {
     }
 }
 
-function clearAllTransactions() {
-    if (dashboardState.transactions.length === 0) {
-        showToast('No transactions to clear', 'info');
-        return;
-    }
-    if (confirm(`Delete all ${dashboardState.transactions.length} transactions?`)) {
-        dashboardState.transactions.forEach(tx => {
-            if (tx.type === 'inflow') {
-                dashboardState.income -= tx.amount;
-                const acc = dashboardState.accounts.find(a => a.name === tx.account);
-                if (acc) acc.balance -= tx.amount;
-            } else {
-                dashboardState.outcome -= tx.amount;
-                const acc = dashboardState.accounts.find(a => a.name === tx.account);
-                if (acc) acc.balance += tx.amount;
-            }
-        });
-        dashboardState.transactions = [];
-        calculateMetrics();
-        saveState();
-        updateUI();
-        showToast('🗑️ All transactions cleared', 'success');
-    }
-}
-
 // ============================================================
 // UI UPDATE
 // ============================================================
 
 function updateUI() {
-    document.getElementById('totalBalance').textContent = `KSh ${Math.round(dashboardState.balance).toLocaleString()}`;
+    document.getElementById('totalBalanceDisplay').textContent = `KSh ${Math.round(dashboardState.balance).toLocaleString()}`;
     document.getElementById('ebitda').textContent = `KSh ${Math.round(dashboardState.ebitda).toLocaleString()}`;
     document.getElementById('income').textContent = `KSh ${Math.round(dashboardState.income).toLocaleString()}`;
     document.getElementById('outcome').textContent = `- KSh ${Math.round(dashboardState.outcome).toLocaleString()}`;
@@ -1585,6 +1991,7 @@ function updateUI() {
         const chip = document.createElement('span');
         chip.className = 'account-chip';
         chip.innerHTML = `🏦 ${acc.name} <span class="bal">KSh ${Math.round(acc.balance).toLocaleString()}</span>
+            <button class="edit-account" onclick="editAccount(${idx})">✏️</button>
             <button class="del-account" onclick="deleteAccount(${idx})">✕</button>`;
         accountContainer.appendChild(chip);
     });
@@ -1621,6 +2028,7 @@ function updateUI() {
         item.innerHTML = `
             <div class="tier-lbl">${tier.tier}</div>
             <div class="val">KSh ${Math.round(tier.total).toLocaleString()}</div>
+            <button class="edit-mmr" onclick="editMRR(${idx})">✏️</button>
             <button class="del-mmr" onclick="deleteMRR(${idx})">✕</button>
         `;
         mrrContainer.appendChild(item);
@@ -1637,7 +2045,10 @@ function updateUI() {
             forecastEls[idx].innerHTML = `
                 <div class="week">Week ${f.week}</div>
                 <div class="amount" style="color:${amount >= 0 ? '#4ade80' : '#f87171'}">${amount >= 0 ? '+' : ''}KSh ${Math.round(amount/1000)}k</div>
-                <button class="del-forecast" onclick="deleteForecast(${idx})">✕</button>
+                <div>
+                    <button class="edit-forecast" onclick="editForecast(${idx})">✏️</button>
+                    <button class="del-forecast" onclick="deleteForecast(${idx})">✕</button>
+                </div>
             `;
         }
     });
@@ -1773,9 +2184,9 @@ if (!checkSession()) {
 setInterval(autoRefresh, 15000);
 window.addEventListener('beforeunload', saveState);
 
-console.log('🔐 FinSight Pro · Enterprise Suite with Manual Data Entry');
+console.log('🔐 FinSight Pro · Enterprise Suite with Manual Control');
 console.log('👤 Demo: demo@finsight.com / Demo@123');
-console.log('📊 Features: Add/Delete Accounts, Transactions, MRR, Forecast');
+console.log('✏️ Click any ✏️ to edit, ✕ to delete');
 </script>
 </body>
 </html>
