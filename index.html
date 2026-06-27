@@ -7,12 +7,11 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <link rel="manifest" href="data:application/json,{"name":"FinSight Pro","short_name":"FinSight","start_url":".","display":"standalone","background_color":"#0f172a","theme_color":"#0f172a","icons":[{"src":"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%233b82f6'/%3E%3Ctext x='50' y='68' font-size='52' text-anchor='middle' fill='white' font-family='sans-serif'%3E%26%23x20B9;%3C/text%3E%3C/svg%3E","sizes":"192x192","type":"image/svg+xml"}]}" />
-    <title>FinSight Pro · AI SaaS</title>
+    <title>FinSight Pro · Secure Auth</title>
     <style>
         :root {
             --glass-bg: rgba(19, 30, 47, 0.7);
             --glass-border: rgba(51, 65, 85, 0.4);
-            --glow-color: rgba(59, 130, 246, 0.15);
             --primary: #3b82f6;
             --primary-dark: #2563eb;
             --success: #4ade80;
@@ -29,362 +28,141 @@
             background: #070b14;
             background-image: radial-gradient(circle at 50% 0%, #101b30 0%, #070b14 70%);
             color: #e2e8f0;
-            padding: 16px 12px 100px;
             min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
             -webkit-font-smoothing: antialiased;
         }
         .app {
+            width: 100%;
             max-width: 480px;
             margin: 0 auto;
         }
         
-        /* Header */
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 0 20px;
+        /* Auth Container */
+        .auth-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            border-radius: 24px;
+            padding: 32px 24px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.25);
         }
-        .logo {
+        .auth-logo {
             font-weight: 800;
-            font-size: 24px;
+            font-size: 28px;
             letter-spacing: -0.75px;
             background: linear-gradient(135deg, #60a5fa, #a78bfa, #f472b6);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        .auth-subtitle {
+            text-align: center;
+            color: #94a3b8;
+            font-size: 14px;
+            margin-bottom: 24px;
         }
         
-        /* Buttons */
-        .btn-primary {
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
-            border: 1px solid #60a5fa;
+        .form-group { margin-bottom: 16px; }
+        .form-label {
+            display: block;
+            font-size: 11px;
+            text-transform: uppercase;
+            font-weight: 700;
+            color: #64748b;
+            margin-bottom: 6px;
+            letter-spacing: 0.5px;
+        }
+        .form-control {
+            width: 100%;
+            background: rgba(7, 11, 20, 0.5);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 12px 16px;
             color: white;
-            padding: 6px 16px;
-            border-radius: 40px;
+            font-size: 14px;
+            transition: 0.2s;
+        }
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(7, 11, 20, 0.8);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        .form-control::placeholder { color: #475569; }
+        .form-control.error { border-color: var(--danger); }
+        .form-error {
+            color: var(--danger);
             font-size: 12px;
+            margin-top: 4px;
+            display: none;
+        }
+        .form-error.show { display: block; }
+        
+        .btn-primary {
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border: none;
+            color: white;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 14px;
             font-weight: 600;
             cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
             transition: 0.2s;
-            border: none;
+            margin-top: 8px;
         }
         .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3); }
         .btn-primary:active { transform: translateY(0); }
-        
-        .btn-danger {
-            background: linear-gradient(135deg, #ef4444, #dc2626);
-            border: 1px solid #f87171;
-            color: white;
-            padding: 6px 16px;
-            border-radius: 40px;
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            transition: 0.2s;
-            border: none;
-        }
-        .btn-danger:hover { opacity: 0.9; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3); }
-        .btn-danger:active { transform: translateY(0); }
+        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
         
         .btn-secondary {
-            background: rgba(30, 41, 59, 0.6);
+            width: 100%;
+            background: transparent;
             border: 1px solid var(--glass-border);
             color: #94a3b8;
-            padding: 6px 14px;
-            border-radius: 40px;
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .btn-secondary:hover { background: #1e293b; color: #e2e8f0; }
-        .btn-icon {
-            background: rgba(239, 68, 68, 0.2);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            color: #f87171;
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            cursor: pointer;
+            padding: 12px;
+            border-radius: 12px;
             font-size: 14px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
+            font-weight: 600;
+            cursor: pointer;
             transition: 0.2s;
-            margin-left: 6px;
         }
-        .btn-icon:hover { background: rgba(239, 68, 68, 0.4); transform: scale(1.1); }
-        .btn-icon:active { transform: scale(0.9); }
-
-        /* Cards */
-        .card {
-            background: var(--glass-bg);
-            backdrop-filter: blur(12px);
-            border-radius: 20px;
-            padding: 18px 16px;
-            border: 1px solid var(--glass-border);
-            box-shadow: 0 8px 32px rgba(0,0,0,0.25);
-            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s;
-        }
-        .card:active { transform: scale(0.98); }
-        .grid-2 {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 16px;
-        }
-        .card-label {
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 0.75px;
-            color: #64748b;
-            font-weight: 700;
-        }
-        .card-value {
-            font-size: 22px;
-            font-weight: 700;
-            margin-top: 4px;
-            letter-spacing: -0.5px;
-            color: #f8fafc;
-        }
-        .card-change {
-            font-size: 11px;
-            font-weight: 600;
-            margin-top: 6px;
-            display: inline-flex;
-            align-items: center;
-            padding: 3px 8px;
-            border-radius: 40px;
-            background: rgba(30, 41, 59, 0.4);
-        }
-        .positive { color: #4ade80; }
-        .negative { color: #f87171; }
-        .big-number { font-size: 32px; font-weight: 800; letter-spacing: -1px; }
-        .divider {
-            border: none;
-            border-top: 1px solid rgba(51, 65, 85, 0.3);
-            margin: 18px 0;
-        }
+        .btn-secondary:hover { background: rgba(30, 41, 59, 0.3); color: #e2e8f0; }
         
-        /* Accounts */
-        .account-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 8px;
-        }
-        .account-chip {
-            background: rgba(15, 26, 43, 0.6);
-            padding: 6px 14px;
-            border-radius: 40px;
-            font-size: 13px;
-            border: 1px solid var(--glass-border);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .account-chip:hover { background: #1a2a3f; border-color: #3b82f6; }
-        .account-chip .bal { font-weight: 600; color: #f1f5f9; }
-        
-        /* Risk Box */
-        .risk-box {
-            background: rgba(42, 26, 42, 0.6);
-            border: 1px solid #7f1d1d;
-            border-radius: 16px;
-            padding: 14px 16px;
-            margin: 12px 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
-            transition: 0.2s ease;
-        }
-        .risk-box:hover { background: rgba(58, 26, 42, 0.8); box-shadow: 0 0 16px rgba(239, 68, 68, 0.1); }
-        .risk-box .label { color: #fca5a5; font-size: 13px; font-weight: 500; }
-        .risk-box .amount { color: #f87171; font-weight: 700; font-size: 20px; }
-        .risk-box.safe {
-            border-color: #1a3a2a;
-            background: rgba(26, 42, 26, 0.4);
-        }
-        .risk-box.safe .label { color: #86efac; }
-        .risk-box.safe .amount { color: #4ade80; }
-        
-        /* Shortcuts */
-        .shortcut-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin: 12px 0;
-        }
-        .shortcut-btn {
-            background: linear-gradient(135deg, #131e2f, #1a2a3f);
-            border: 1px solid var(--glass-border);
-            border-radius: 16px;
-            padding: 14px 12px;
-            text-align: left;
-            font-size: 13px;
-            font-weight: 600;
-            color: #cbd5e1;
-            transition: all 0.2s;
-            cursor: pointer;
-        }
-        .shortcut-btn:hover { border-color: #3b82f6; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
-        .shortcut-btn:active { transform: scale(0.96); }
-        .shortcut-btn small {
-            display: block;
-            font-weight: 500;
-            color: #64748b;
-            font-size: 11px;
-            margin-top: 4px;
-        }
-        
-        /* Runway */
-        .runway-box {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(15, 26, 43, 0.5);
-            border-radius: 16px;
-            padding: 14px 16px;
-            border: 1px solid var(--glass-border);
-            margin: 8px 0;
-        }
-        
-        /* MRR */
-        .mmr-box {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin: 8px 0;
-        }
-        .mmr-item {
+        .auth-switch {
             text-align: center;
-            background: rgba(15, 26, 43, 0.5);
-            padding: 10px 8px;
-            border-radius: 14px;
-            border: 1px solid var(--glass-border);
+            margin-top: 16px;
+            font-size: 13px;
+            color: #94a3b8;
+        }
+        .auth-switch a {
+            color: var(--primary);
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .auth-switch a:hover { text-decoration: underline; }
+        
+        .password-toggle {
             position: relative;
         }
-        .mmr-item .tier-lbl { font-size: 10px; color: #64748b; text-transform: uppercase; font-weight: 700; margin-bottom: 2px;}
-        .mmr-item .val { font-weight: 700; font-size: 15px; color: #f1f5f9; }
-        .mmr-item .delete-mmr {
+        .password-toggle .toggle-btn {
             position: absolute;
-            top: -6px;
-            right: -6px;
-            background: rgba(239, 68, 68, 0.9);
-            color: white;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
             border: none;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
+            color: #64748b;
             cursor: pointer;
-            font-size: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: 0.2s;
+            font-size: 18px;
         }
-        .mmr-item .delete-mmr:hover { transform: scale(1.2); background: #dc2626; }
-        
-        /* Transaction History */
-        .tx-history {
-            margin: 12px 0;
-            max-height: 200px;
-            overflow-y: auto;
-        }
-        .tx-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 12px;
-            background: rgba(15, 26, 43, 0.3);
-            border-radius: 10px;
-            margin-bottom: 4px;
-            border: 1px solid var(--glass-border);
-        }
-        .tx-item .tx-info { display: flex; flex-direction: column; gap: 2px; }
-        .tx-item .tx-info .tx-memo { font-size: 12px; color: #94a3b8; }
-        .tx-item .tx-info .tx-account { font-size: 10px; color: #64748b; }
-        .tx-item .tx-amount { font-weight: 600; }
-        .tx-item .tx-amount.inflow { color: #4ade80; }
-        .tx-item .tx-amount.outflow { color: #f87171; }
-        
-        /* Forecast */
-        .forecast-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 6px;
-            margin: 12px 0 8px;
-        }
-        .forecast-item {
-            background: rgba(7, 11, 20, 0.5);
-            padding: 10px 4px;
-            border-radius: 12px;
-            text-align: center;
-            border: 1px solid rgba(51, 65, 85, 0.2);
-        }
-        .forecast-item .week { font-size: 10px; color: #64748b; font-weight: 600; margin-bottom: 2px; }
-        .forecast-item .amount { font-size: 13px; font-weight: 700; }
-        
-        /* Progress Bar */
-        .progress-bar {
-            width: 100%;
-            height: 6px;
-            background: #1e293b;
-            border-radius: 10px;
-            margin: 8px 0 4px;
-            overflow: hidden;
-        }
-        .progress-bar .fill {
-            height: 100%;
-            border-radius: 10px;
-            transition: width 0.5s ease-out;
-        }
-        
-        /* AI Insight */
-        .ai-insight {
-            background: linear-gradient(135deg, rgba(26, 42, 63, 0.4), rgba(15, 26, 43, 0.4));
-            border: 1px solid #3b82f6;
-            border-radius: 16px;
-            padding: 14px;
-            margin: 12px 0 16px;
-            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.08);
-        }
-        .ai-insight .label { color: #60a5fa; font-weight: 700; font-size: 11px; letter-spacing: 0.5px; text-transform: uppercase; }
-        .ai-insight .text { font-size: 13px; margin-top: 6px; color: #cbd5e1; line-height: 1.5; }
-        
-        /* Scenario Badges */
-        .scenario-badge {
-            background: rgba(30, 41, 59, 0.6);
-            padding: 5px 14px;
-            border-radius: 40px;
-            font-size: 11px;
-            font-weight: 600;
-            color: #94a3b8;
-            border: 1px solid var(--glass-border);
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .scenario-badge:hover { background: #1e293b; color: #cbd5e1; }
-        .scenario-badge.active {
-            background: #3b82f6;
-            color: #ffffff;
-            border-color: #60a5fa;
-            box-shadow: 0 0 10px rgba(59, 130, 246, 0.4);
-        }
-        
-        .flex-between { display: flex; justify-content: space-between; align-items: center; }
-        .gap-8 { gap: 8px; }
-        .mt-8 { margin-top: 8px; }
-        .mb-8 { margin-bottom: 8px; }
-        .flex-wrap { flex-wrap: wrap; }
+        .password-toggle .toggle-btn:hover { color: #e2e8f0; }
         
         /* Toast */
         .toast {
@@ -407,94 +185,176 @@
             z-index: 999;
         }
         .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+        .toast.success { border-color: var(--success); }
+        .toast.error { border-color: var(--danger); }
         
-        /* Modal */
-        .modal-overlay {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(7, 11, 20, 0.85);
-            backdrop-filter: blur(16px);
+        /* Dashboard (hidden by default) */
+        .dashboard {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+        .dashboard.active { display: block; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .user-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(30, 41, 59, 0.6);
+            padding: 6px 14px 6px 6px;
+            border-radius: 40px;
+            border: 1px solid var(--glass-border);
+            font-size: 13px;
+            cursor: pointer;
+        }
+        .user-badge .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), #a78bfa);
             display: flex;
             align-items: center;
             justify-content: center;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.25s ease;
-            z-index: 1000;
-            padding: 16px;
-        }
-        .modal-overlay.active { opacity: 1; pointer-events: auto; }
-        .modal-content {
-            background: #0f1a2b;
-            border: 1px solid var(--glass-border);
-            width: 100%;
-            max-width: 400px;
-            border-radius: 24px;
-            padding: 24px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-            transform: scale(0.95);
-            transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        .modal-overlay.active .modal-content { transform: scale(1); }
-        .modal-title { font-size: 18px; font-weight: 700; margin-bottom: 16px; color: #f8fafc; }
-        
-        .form-group { margin-bottom: 16px; }
-        .form-label { display: block; font-size: 11px; text-transform: uppercase; font-weight: 700; color: #64748b; margin-bottom: 6px; letter-spacing: 0.5px; }
-        .form-control {
-            width: 100%;
-            background: rgba(7, 11, 20, 0.5);
-            border: 1px solid var(--glass-border);
-            border-radius: 12px;
-            padding: 12px;
-            color: white;
+            font-weight: 700;
             font-size: 14px;
-            transition: 0.2s;
+            color: white;
         }
-        .form-control:focus { outline: none; border-color: #3b82f6; background: rgba(7, 11, 20, 0.8); }
-        .form-control::placeholder { color: #475569; }
+        .user-badge .role-badge {
+            background: rgba(59, 130, 246, 0.2);
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 10px;
+            color: var(--primary);
+            font-weight: 600;
+        }
         
-        .form-radio-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .radio-btn {
-            border: 1px solid var(--glass-border);
-            background: rgba(7, 11, 20, 0.3);
-            border-radius: 12px;
-            padding: 10px;
-            text-align: center;
-            font-size: 13px;
+        .logout-btn {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: var(--danger);
+            padding: 6px 14px;
+            border-radius: 40px;
+            font-size: 12px;
             font-weight: 600;
             cursor: pointer;
-            color: #94a3b8;
             transition: 0.2s;
         }
-        .radio-btn.selected[data-type="inflow"] { background: rgba(74, 222, 128, 0.15); border-color: #4ade80; color: #4ade80; }
-        .radio-btn.selected[data-type="outflow"] { background: rgba(248, 113, 113, 0.15); border-color: #f87171; color: #f87171; }
+        .logout-btn:hover { background: rgba(239, 68, 68, 0.3); }
         
-        .modal-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 24px; }
-        .btn-close-modal {
-            background: transparent;
-            border: 1px solid var(--glass-border);
-            color: #94a3b8;
-            border-radius: 12px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 14px;
-            padding: 12px;
+        /* Import dashboard styles from previous version */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0 20px;
         }
-        .btn-submit {
-            background: #3b82f6;
-            color: white;
+        .logo {
+            font-weight: 800;
+            font-size: 24px;
+            letter-spacing: -0.75px;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa, #f472b6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            padding: 18px 16px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .card-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.75px;
+            color: #64748b;
+            font-weight: 700;
+        }
+        .card-value {
+            font-size: 22px;
+            font-weight: 700;
+            margin-top: 4px;
+            letter-spacing: -0.5px;
+            color: #f8fafc;
+        }
+        .big-number { font-size: 32px; font-weight: 800; letter-spacing: -1px; }
+        .positive { color: #4ade80; }
+        .negative { color: #f87171; }
+        .card-change {
+            font-size: 11px;
+            font-weight: 600;
+            margin-top: 6px;
+            display: inline-flex;
+            align-items: center;
+            padding: 3px 8px;
+            border-radius: 40px;
+            background: rgba(30, 41, 59, 0.4);
+        }
+        .divider {
             border: none;
-            border-radius: 12px;
-            cursor: pointer;
+            border-top: 1px solid rgba(51, 65, 85, 0.3);
+            margin: 18px 0;
+        }
+        .flex-between { display: flex; justify-content: space-between; align-items: center; }
+        .btn-primary-small {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border: none;
+            color: white;
+            padding: 6px 16px;
+            border-radius: 40px;
+            font-size: 12px;
             font-weight: 600;
-            font-size: 14px;
-            padding: 12px;
+            cursor: pointer;
             transition: 0.2s;
         }
-        .btn-submit:hover { background: #2563eb; }
-        .btn-submit.danger { background: #ef4444; }
-        .btn-submit.danger:hover { background: #dc2626; }
-        
+        .btn-primary-small:hover { opacity: 0.9; transform: translateY(-1px); }
+        .account-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        .account-chip {
+            background: rgba(15, 26, 43, 0.6);
+            padding: 6px 14px;
+            border-radius: 40px;
+            font-size: 13px;
+            border: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .account-chip .bal { font-weight: 600; color: #f1f5f9; }
+        .risk-box {
+            background: rgba(42, 26, 42, 0.6);
+            border: 1px solid #7f1d1d;
+            border-radius: 16px;
+            padding: 14px 16px;
+            margin: 12px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .risk-box .label { color: #fca5a5; font-size: 13px; font-weight: 500; }
+        .risk-box .amount { color: #f87171; font-weight: 700; font-size: 20px; }
+        .risk-box.safe {
+            border-color: #1a3a2a;
+            background: rgba(26, 42, 26, 0.4);
+        }
+        .risk-box.safe .label { color: #86efac; }
+        .risk-box.safe .amount { color: #4ade80; }
         .footer-meta {
             text-align: center;
             margin-top: 32px;
@@ -502,12 +362,123 @@
             color: #475569;
             line-height: 1.6;
         }
-        .footer-meta span { color: #334155; }
+        .scenario-badge {
+            background: rgba(30, 41, 59, 0.6);
+            padding: 5px 14px;
+            border-radius: 40px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #94a3b8;
+            border: 1px solid var(--glass-border);
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .scenario-badge.active {
+            background: var(--primary);
+            color: #ffffff;
+            border-color: #60a5fa;
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.4);
+        }
+        .shortcut-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 12px 0;
+        }
+        .shortcut-btn {
+            background: linear-gradient(135deg, #131e2f, #1a2a3f);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 14px 12px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #cbd5e1;
+            cursor: pointer;
+        }
+        .shortcut-btn small {
+            display: block;
+            font-weight: 500;
+            color: #64748b;
+            font-size: 11px;
+            margin-top: 4px;
+        }
+        .runway-box {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(15, 26, 43, 0.5);
+            border-radius: 16px;
+            padding: 14px 16px;
+            border: 1px solid var(--glass-border);
+            margin: 8px 0;
+        }
+        .mmr-box {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 8px 0;
+        }
+        .mmr-item {
+            text-align: center;
+            background: rgba(15, 26, 43, 0.5);
+            padding: 10px 8px;
+            border-radius: 14px;
+            border: 1px solid var(--glass-border);
+        }
+        .mmr-item .tier-lbl { font-size: 10px; color: #64748b; text-transform: uppercase; font-weight: 700; }
+        .mmr-item .val { font-weight: 700; font-size: 15px; color: #f1f5f9; }
+        .forecast-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+            margin: 12px 0 8px;
+        }
+        .forecast-item {
+            background: rgba(7, 11, 20, 0.5);
+            padding: 10px 4px;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid rgba(51, 65, 85, 0.2);
+        }
+        .forecast-item .week { font-size: 10px; color: #64748b; font-weight: 600; }
+        .forecast-item .amount { font-size: 13px; font-weight: 700; }
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #1e293b;
+            border-radius: 10px;
+            margin: 8px 0 4px;
+            overflow: hidden;
+        }
+        .progress-bar .fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.5s ease-out;
+        }
+        .ai-insight {
+            background: linear-gradient(135deg, rgba(26, 42, 63, 0.4), rgba(15, 26, 43, 0.4));
+            border: 1px solid var(--primary);
+            border-radius: 16px;
+            padding: 14px;
+            margin: 12px 0 16px;
+        }
+        .ai-insight .label { color: #60a5fa; font-weight: 700; font-size: 11px; letter-spacing: 0.5px; text-transform: uppercase; }
+        .ai-insight .text { font-size: 13px; margin-top: 6px; color: #cbd5e1; line-height: 1.5; }
         
-        /* Scrollbar */
-        .tx-history::-webkit-scrollbar { width: 4px; }
-        .tx-history::-webkit-scrollbar-track { background: rgba(15, 26, 43, 0.3); border-radius: 10px; }
-        .tx-history::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 10px; }
+        /* Password strength indicator */
+        .password-strength {
+            height: 4px;
+            border-radius: 4px;
+            margin-top: 4px;
+            background: #1e293b;
+            transition: 0.3s;
+        }
+        .password-strength .bar {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.3s, background 0.3s;
+            width: 0%;
+        }
         
         @media (max-width: 400px) {
             .grid-2 { gap: 8px; }
@@ -520,200 +491,207 @@
     </style>
 </head>
 <body>
-<div class="app" id="app">
-    <!-- Header -->
-    <div class="header">
-        <span class="logo">◆ FinSight Pro</span>
-        <div style="display:flex;gap:8px;">
-            <button class="btn-primary" onclick="toggleModal(true)">➕ Add</button>
-            <button class="btn-danger" onclick="clearAllData()">🗑️ Clear</button>
-        </div>
-    </div>
-
-    <!-- AI Insight -->
-    <div class="ai-insight" id="aiInsight">
-        <div class="label">🧠 AI Financial Insight</div>
-        <div class="text" id="aiText">Analyzing dynamic patterns...</div>
-    </div>
-
-    <!-- Total Balance -->
-    <div class="card" style="margin-bottom:16px;">
-        <div class="flex-between">
-            <span class="card-label">Total Balance (KES)</span>
-            <span class="scenario-badge" onclick="applyScenario('base')">📊 Reset Base</span>
-        </div>
-        <div class="card-value big-number" id="totalBalance">KSh 0</div>
-        <span class="card-change positive" id="balanceChange">▲ 73.3%</span>
-        <span style="margin-left:6px;font-size:12px;color:#64748b;">vs last month</span>
-    </div>
-
-    <!-- Grid 2x2 -->
-    <div class="grid-2">
-        <div class="card">
-            <div class="card-label">EBITDA</div>
-            <div class="card-value" id="ebitda">KSh 0</div>
-            <span class="card-change positive">▲ 5.3%</span>
-        </div>
-        <div class="card">
-            <div class="card-label">Income</div>
-            <div class="card-value" id="income">KSh 0</div>
-            <span class="card-change positive">▲ 11.2%</span>
-        </div>
-    </div>
-
-    <div class="grid-2">
-        <div class="card">
-            <div class="card-label">Outcome</div>
-            <div class="card-value" style="color:#f87171;" id="outcome">- KSh 0</div>
-            <span class="card-change negative">▼ 1.3%</span>
-        </div>
-        <div class="card">
-            <div class="card-label">Growth Rate (MoM)</div>
-            <div class="card-value" style="color:#4ade80;" id="growthRate">9.56%</div>
-            <span class="card-change positive">▲ 2.2%</span>
-        </div>
-    </div>
-
-    <hr class="divider" />
-
-    <!-- Accounts -->
-    <div style="margin-bottom:12px;">
-        <div class="flex-between">
-            <span class="card-label">Accounts</span>
-            <div style="display:flex;gap:4px;">
-                <span style="font-size:11px;color:#64748b;text-transform: uppercase; font-weight:600;">Distribution</span>
-                <button class="btn-icon" onclick="deleteAccount()" title="Delete selected account">✕</button>
+<div class="app">
+    <!-- ==================== AUTH CONTAINER ==================== -->
+    <div id="authContainer">
+        <div class="auth-container">
+            <div class="auth-logo">◆ FinSight Pro</div>
+            
+            <!-- Login Form -->
+            <div id="loginForm">
+                <div class="auth-subtitle">Secure access to your financial dashboard</div>
+                
+                <div class="form-group">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" id="loginEmail" class="form-control" placeholder="you@company.com" value="demo@finsight.com">
+                    <div class="form-error" id="loginEmailError">Please enter a valid email</div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <div class="password-toggle">
+                        <input type="password" id="loginPassword" class="form-control" placeholder="Enter your password" value="Demo@123">
+                        <button class="toggle-btn" onclick="togglePassword('loginPassword')">👁️</button>
+                    </div>
+                    <div class="form-error" id="loginPasswordError">Password is required</div>
+                </div>
+                
+                <button class="btn-primary" onclick="handleLogin()">Sign In</button>
+                
+                <div class="auth-switch">
+                    Don't have an account? <a onclick="showRegister()">Create one</a>
+                </div>
+                <div class="auth-switch" style="margin-top:8px;">
+                    <a onclick="showForgotPassword()">Forgot password?</a>
+                </div>
+            </div>
+            
+            <!-- Register Form -->
+            <div id="registerForm" style="display:none;">
+                <div class="auth-subtitle">Create your secure account</div>
+                
+                <div class="form-group">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" id="registerName" class="form-control" placeholder="John Doe">
+                    <div class="form-error" id="registerNameError">Name is required</div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" id="registerEmail" class="form-control" placeholder="you@company.com">
+                    <div class="form-error" id="registerEmailError">Please enter a valid email</div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <div class="password-toggle">
+                        <input type="password" id="registerPassword" class="form-control" placeholder="Min 8 characters" oninput="checkPasswordStrength(this.value)">
+                        <button class="toggle-btn" onclick="togglePassword('registerPassword')">👁️</button>
+                    </div>
+                    <div class="password-strength"><div class="bar" id="passwordStrengthBar"></div></div>
+                    <div class="form-error" id="registerPasswordError">Password must be at least 8 characters</div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Confirm Password</label>
+                    <input type="password" id="registerConfirm" class="form-control" placeholder="Confirm your password">
+                    <div class="form-error" id="registerConfirmError">Passwords do not match</div>
+                </div>
+                
+                <button class="btn-primary" onclick="handleRegister()">Create Account</button>
+                
+                <div class="auth-switch">
+                    Already have an account? <a onclick="showLogin()">Sign in</a>
+                </div>
+            </div>
+            
+            <!-- Forgot Password Form -->
+            <div id="forgotForm" style="display:none;">
+                <div class="auth-subtitle">Reset your password</div>
+                <p style="color:#94a3b8;font-size:13px;margin-bottom:16px;">Enter your email and we'll send you a reset link</p>
+                
+                <div class="form-group">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" id="resetEmail" class="form-control" placeholder="you@company.com">
+                    <div class="form-error" id="resetEmailError">Please enter a valid email</div>
+                </div>
+                
+                <button class="btn-primary" onclick="handleResetPassword()">Send Reset Link</button>
+                
+                <div class="auth-switch">
+                    Remember your password? <a onclick="showLogin()">Sign in</a>
+                </div>
             </div>
         </div>
-        <div class="account-row" id="accountList"></div>
     </div>
-
-    <hr class="divider" />
-
-    <!-- Transaction History -->
-    <div style="margin:12px 0;">
-        <div class="flex-between">
-            <span class="card-label">📋 Transaction History</span>
-            <button class="btn-icon" onclick="clearTransactions()" title="Clear all transactions">✕</button>
+    
+    <!-- ==================== DASHBOARD ==================== -->
+    <div id="dashboard" class="dashboard">
+        <!-- Header -->
+        <div class="header">
+            <span class="logo">◆ FinSight Pro</span>
+            <div class="flex-between" style="gap:12px;">
+                <div class="user-badge" id="userBadge">
+                    <div class="avatar" id="userAvatar">D</div>
+                    <div>
+                        <span id="userName">User</span>
+                        <span class="role-badge" id="userRole">Admin</span>
+                    </div>
+                </div>
+                <button class="logout-btn" onclick="handleLogout()">Sign Out</button>
+            </div>
         </div>
-        <div class="tx-history" id="txHistory"></div>
-    </div>
-
-    <!-- Forecast -->
-    <div style="background:rgba(15, 26, 43, 0.4);border-radius:20px;padding:14px;border:1px solid var(--glass-border);">
-        <div class="flex-between">
-            <span class="card-label">📈 4-Week Forecast</span>
-            <span style="font-size:11px;color:#64748b;">AI Predictive</span>
-        </div>
-        <div class="forecast-grid" id="forecastGrid">
-            <div class="forecast-item"><div class="week">Week 1</div><div class="amount">...</div></div>
-            <div class="forecast-item"><div class="week">Week 2</div><div class="amount">...</div></div>
-            <div class="forecast-item"><div class="week">Week 3</div><div class="amount">...</div></div>
-            <div class="forecast-item"><div class="week">Week 4</div><div class="amount">...</div></div>
-        </div>
-        <div class="progress-bar"><div class="fill" id="forecastBar" style="width:50%;background:linear-gradient(90deg,#4ade80,#fbbf24,#f87171);"></div></div>
-    </div>
-
-    <!-- Risk Box -->
-    <div class="risk-box" id="riskBox">
-        <span class="label">⚠️ Risk of cash gap prediction</span>
-        <span class="amount" id="riskAmount">KSh 0</span>
-    </div>
-
-    <!-- Users -->
-    <div class="card" style="margin:12px 0;">
-        <div class="flex-between">
-            <span class="card-label">👥 New Users</span>
-            <span class="card-change positive" id="userChange">▲ 30.3%</span>
-        </div>
-        <div class="card-value" style="font-size:28px;" id="newUsers">14,833</div>
-    </div>
-
-    <!-- Transfer Shortcuts -->
-    <div style="margin:16px 0 4px;">
-        <span class="card-label">⚡ Transfer funds</span>
-    </div>
-    <div class="shortcut-grid">
-        <div class="shortcut-btn" onclick="quickTransfer('M-Pesa Business Account', 2000)">📱 Pay to M-Pesa <small>KSh 2,000 shortcut</small></div>
-        <div class="shortcut-btn" onclick="quickTransfer('PayPal Wallet', 0)">💳 PayPal Settlement <small>Custom draw limit</small></div>
-    </div>
-
-    <!-- Runway -->
-    <div style="margin:16px 0 4px;">
-        <span class="card-label">🛫 Months of Runway</span>
-    </div>
-    <div class="runway-box">
-        <span style="color:#94a3b8; font-size:13px;">Target: 12–18 mo</span>
-        <span style="font-weight:700;color:#facc15; font-size:13px;" id="cashOutDate">Runway End: --</span>
-        <span style="color:#4ade80;font-weight:600; font-size:13px;" id="monthsLeft">~0 mo</span>
-    </div>
-
-    <!-- MRR -->
-    <div style="margin:16px 0 4px;">
-        <div class="flex-between">
-            <span class="card-label">📊 MRR Tiers</span>
-            <button class="btn-icon" onclick="deleteMRR()" title="Delete selected MRR tier">✕</button>
-        </div>
-    </div>
-    <div class="mmr-box" id="mrrGrid"></div>
-
-    <!-- Scenario Badges -->
-    <div style="margin:20px 0 8px;display:flex;gap:6px;flex-wrap:wrap; align-items:center;">
-        <span class="card-label" style="margin-right:4px;">🎯 Scenario:</span>
-        <span class="scenario-badge active" data-scenario="base" onclick="applyScenario('base')">Base</span>
-        <span class="scenario-badge" data-scenario="optimistic" onclick="applyScenario('optimistic')">Optimistic</span>
-        <span class="scenario-badge" data-scenario="pessimistic" onclick="applyScenario('pessimistic')">Pessimistic</span>
-    </div>
-
-    <div class="footer-meta">
-        FinSight Pro · Real-time Operational Node<br>
-        <span>Click ✕ to delete items · All data auto-saves</span>
-    </div>
-</div>
-
-<!-- Modal -->
-<div class="modal-overlay" id="inputModal">
-    <div class="modal-content">
-        <div class="modal-title">Log New Transaction</div>
         
-        <div class="form-group">
-            <label class="form-label">Transaction Type</label>
-            <div class="form-radio-group">
-                <div class="radio-btn selected" data-type="inflow" onclick="setTxType('inflow')">Inflow (+)</div>
-                <div class="radio-btn" data-type="outflow" onclick="setTxType('outflow')">Outflow (-)</div>
+        <!-- AI Insight -->
+        <div class="ai-insight">
+            <div class="label">🧠 AI Financial Insight</div>
+            <div class="text" id="aiText">Welcome back! Analyzing your financial data...</div>
+        </div>
+        
+        <!-- Balance -->
+        <div class="card" style="margin-bottom:16px;">
+            <div class="flex-between">
+                <span class="card-label">Total Balance (KES)</span>
+                <span class="scenario-badge" onclick="applyScenario('base')">📊 Reset</span>
             </div>
+            <div class="card-value big-number" id="totalBalance">KSh 0</div>
+            <span class="card-change positive">▲ 73.3%</span>
         </div>
-
-        <div class="form-group">
-            <label class="form-label">Amount (KES)</label>
-            <input type="number" id="txAmount" class="form-control" placeholder="e.g. 50000" min="1">
+        
+        <!-- Grid -->
+        <div class="grid-2">
+            <div class="card"><div class="card-label">EBITDA</div><div class="card-value" id="ebitda">KSh 0</div><span class="card-change positive">▲ 5.3%</span></div>
+            <div class="card"><div class="card-label">Income</div><div class="card-value" id="income">KSh 0</div><span class="card-change positive">▲ 11.2%</span></div>
         </div>
-
-        <div class="form-group">
-            <label class="form-label">Target Account</label>
-            <select id="txAccount" class="form-control"></select>
+        <div class="grid-2">
+            <div class="card"><div class="card-label">Outcome</div><div class="card-value" style="color:#f87171;" id="outcome">- KSh 0</div><span class="card-change negative">▼ 1.3%</span></div>
+            <div class="card"><div class="card-label">Growth Rate</div><div class="card-value" style="color:#4ade80;" id="growthRate">9.56%</div><span class="card-change positive">▲ 2.2%</span></div>
         </div>
-
-        <div class="form-group">
-            <label class="form-label">Memo</label>
-            <input type="text" id="txMemo" class="form-control" placeholder="Invoice, vendor payout...">
+        
+        <hr class="divider" />
+        
+        <!-- Accounts -->
+        <div style="margin-bottom:12px;">
+            <span class="card-label">Accounts</span>
+            <div class="account-row" id="accountList"></div>
         </div>
-
-        <div class="modal-actions">
-            <button class="btn-close-modal" onclick="toggleModal(false)">Cancel</button>
-            <button class="btn-submit" onclick="submitTransaction()">Post Entry</button>
+        
+        <hr class="divider" />
+        
+        <!-- Forecast -->
+        <div style="background:rgba(15,26,43,0.4);border-radius:20px;padding:14px;border:1px solid var(--glass-border);">
+            <div class="flex-between"><span class="card-label">📈 4-Week Forecast</span></div>
+            <div class="forecast-grid" id="forecastGrid">
+                <div class="forecast-item"><div class="week">Week 1</div><div class="amount">...</div></div>
+                <div class="forecast-item"><div class="week">Week 2</div><div class="amount">...</div></div>
+                <div class="forecast-item"><div class="week">Week 3</div><div class="amount">...</div></div>
+                <div class="forecast-item"><div class="week">Week 4</div><div class="amount">...</div></div>
+            </div>
+            <div class="progress-bar"><div class="fill" id="forecastBar" style="width:50%;background:linear-gradient(90deg,#4ade80,#fbbf24,#f87171);"></div></div>
         </div>
-    </div>
-</div>
-
-<!-- Delete Confirmation Modal -->
-<div class="modal-overlay" id="deleteModal">
-    <div class="modal-content">
-        <div class="modal-title">⚠️ Confirm Delete</div>
-        <p style="color:#94a3b8; margin-bottom:20px; font-size:14px;" id="deleteMsg">Are you sure you want to delete this item?</p>
-        <div class="modal-actions">
-            <button class="btn-close-modal" onclick="closeDeleteModal()">Cancel</button>
-            <button class="btn-submit danger" id="confirmDeleteBtn" onclick="confirmDelete()">Delete</button>
+        
+        <!-- Risk -->
+        <div class="risk-box" id="riskBox">
+            <span class="label">⚠️ Risk of cash gap prediction</span>
+            <span class="amount" id="riskAmount">KSh 0</span>
+        </div>
+        
+        <!-- Users -->
+        <div class="card" style="margin:12px 0;">
+            <div class="flex-between"><span class="card-label">👥 New Users</span><span class="card-change positive" id="userChange">▲ 30.3%</span></div>
+            <div class="card-value" style="font-size:28px;" id="newUsers">14,833</div>
+        </div>
+        
+        <!-- Shortcuts -->
+        <div style="margin:16px 0 4px;"><span class="card-label">⚡ Quick Actions</span></div>
+        <div class="shortcut-grid">
+            <div class="shortcut-btn" onclick="quickTransfer('M-Pesa', 2000)">📱 Pay M-Pesa <small>KSh 2,000</small></div>
+            <div class="shortcut-btn" onclick="quickTransfer('PayPal', 0)">💳 PayPal <small>Custom</small></div>
+        </div>
+        
+        <!-- Runway -->
+        <div style="margin:16px 0 4px;"><span class="card-label">🛫 Runway</span></div>
+        <div class="runway-box">
+            <span style="color:#94a3b8;font-size:13px;">Target: 12–18 mo</span>
+            <span style="font-weight:700;color:#facc15;font-size:13px;" id="cashOutDate">--</span>
+            <span style="color:#4ade80;font-weight:600;font-size:13px;" id="monthsLeft">~0 mo</span>
+        </div>
+        
+        <!-- MRR -->
+        <div style="margin:16px 0 4px;"><span class="card-label">📊 MRR Tiers</span></div>
+        <div class="mmr-box" id="mrrGrid"></div>
+        
+        <!-- Scenarios -->
+        <div style="margin:20px 0 8px;display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
+            <span class="card-label" style="margin-right:4px;">🎯 Scenario:</span>
+            <span class="scenario-badge active" data-scenario="base" onclick="applyScenario('base')">Base</span>
+            <span class="scenario-badge" data-scenario="optimistic" onclick="applyScenario('optimistic')">Optimistic</span>
+            <span class="scenario-badge" data-scenario="pessimistic" onclick="applyScenario('pessimistic')">Pessimistic</span>
+        </div>
+        
+        <div class="footer-meta">
+            FinSight Pro · Secure Enterprise Platform<br>
+            <span>All data encrypted in transit</span>
         </div>
     </div>
 </div>
@@ -723,9 +701,269 @@
 
 <script>
 // ============================================================
-// STATE ENGINE
+// AUTH SYSTEM
 // ============================================================
-const state = {
+
+// Users database (in production, this would be a backend)
+const usersDB = {
+    'demo@finsight.com': {
+        id: '1',
+        name: 'Demo User',
+        email: 'demo@finsight.com',
+        password: 'Demo@123',
+        role: 'admin',
+        created: '2024-01-01',
+        lastLogin: null
+    }
+};
+
+// Session management
+let currentUser = null;
+let authToken = null;
+
+// ============================================================
+// AUTH FUNCTIONS
+// ============================================================
+
+function togglePassword(inputId) {
+    const input = document.getElementById(inputId);
+    if (input.type === 'password') {
+        input.type = 'text';
+    } else {
+        input.type = 'password';
+    }
+}
+
+function showLogin() {
+    document.getElementById('loginForm').style.display = 'block';
+    document.getElementById('registerForm').style.display = 'none';
+    document.getElementById('forgotForm').style.display = 'none';
+    clearErrors();
+}
+
+function showRegister() {
+    document.getElementById('loginForm').style.display = 'none';
+    document.getElementById('registerForm').style.display = 'block';
+    document.getElementById('forgotForm').style.display = 'none';
+    clearErrors();
+}
+
+function showForgotPassword() {
+    document.getElementById('loginForm').style.display = 'none';
+    document.getElementById('registerForm').style.display = 'none';
+    document.getElementById('forgotForm').style.display = 'block';
+    clearErrors();
+}
+
+function clearErrors() {
+    document.querySelectorAll('.form-error').forEach(el => el.classList.remove('show'));
+    document.querySelectorAll('.form-control').forEach(el => el.classList.remove('error'));
+}
+
+function validateEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+function checkPasswordStrength(password) {
+    const bar = document.getElementById('passwordStrengthBar');
+    let strength = 0;
+    if (password.length >= 8) strength += 25;
+    if (password.match(/[a-z]/)) strength += 25;
+    if (password.match(/[A-Z]/)) strength += 25;
+    if (password.match(/[0-9!@#$%^&*]/)) strength += 25;
+    
+    bar.style.width = strength + '%';
+    if (strength < 50) {
+        bar.style.background = '#f87171';
+    } else if (strength < 75) {
+        bar.style.background = '#fbbf24';
+    } else {
+        bar.style.background = '#4ade80';
+    }
+}
+
+// ============================================================
+// AUTH HANDLERS
+// ============================================================
+
+function handleLogin() {
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value;
+    let isValid = true;
+    
+    clearErrors();
+    
+    if (!validateEmail(email)) {
+        document.getElementById('loginEmailError').classList.add('show');
+        document.getElementById('loginEmail').classList.add('error');
+        isValid = false;
+    }
+    
+    if (!password || password.length < 1) {
+        document.getElementById('loginPasswordError').classList.add('show');
+        document.getElementById('loginPassword').classList.add('error');
+        isValid = false;
+    }
+    
+    if (!isValid) return;
+    
+    // Check user
+    const user = usersDB[email];
+    if (!user || user.password !== password) {
+        showToast('❌ Invalid email or password', 'error');
+        return;
+    }
+    
+    // Login success
+    currentUser = user;
+    authToken = btoa(email + ':' + Date.now());
+    user.lastLogin = new Date().toISOString();
+    
+    // Save session
+    localStorage.setItem('finsight_session', JSON.stringify({
+        user: user,
+        token: authToken,
+        expires: Date.now() + 86400000 // 24 hours
+    }));
+    
+    showToast('✅ Welcome back, ' + user.name + '!', 'success');
+    setTimeout(() => {
+        showDashboard();
+    }, 500);
+}
+
+function handleRegister() {
+    const name = document.getElementById('registerName').value.trim();
+    const email = document.getElementById('registerEmail').value.trim();
+    const password = document.getElementById('registerPassword').value;
+    const confirm = document.getElementById('registerConfirm').value;
+    let isValid = true;
+    
+    clearErrors();
+    
+    if (!name || name.length < 2) {
+        document.getElementById('registerNameError').classList.add('show');
+        document.getElementById('registerName').classList.add('error');
+        isValid = false;
+    }
+    
+    if (!validateEmail(email)) {
+        document.getElementById('registerEmailError').classList.add('show');
+        document.getElementById('registerEmail').classList.add('error');
+        isValid = false;
+    }
+    
+    if (password.length < 8) {
+        document.getElementById('registerPasswordError').classList.add('show');
+        document.getElementById('registerPassword').classList.add('error');
+        isValid = false;
+    }
+    
+    if (password !== confirm) {
+        document.getElementById('registerConfirmError').classList.add('show');
+        document.getElementById('registerConfirm').classList.add('error');
+        isValid = false;
+    }
+    
+    if (!isValid) return;
+    
+    // Check if user exists
+    if (usersDB[email]) {
+        showToast('❌ User already exists with this email', 'error');
+        return;
+    }
+    
+    // Create user
+    usersDB[email] = {
+        id: Object.keys(usersDB).length + 1,
+        name: name,
+        email: email,
+        password: password,
+        role: 'user',
+        created: new Date().toISOString(),
+        lastLogin: null
+    };
+    
+    showToast('✅ Account created successfully! Please login.', 'success');
+    showLogin();
+    document.getElementById('loginEmail').value = email;
+}
+
+function handleResetPassword() {
+    const email = document.getElementById('resetEmail').value.trim();
+    
+    if (!validateEmail(email)) {
+        document.getElementById('resetEmailError').classList.add('show');
+        document.getElementById('resetEmail').classList.add('error');
+        return;
+    }
+    
+    if (!usersDB[email]) {
+        showToast('❌ No account found with this email', 'error');
+        return;
+    }
+    
+    showToast('✅ Reset link sent to ' + email, 'success');
+    setTimeout(() => showLogin(), 1000);
+}
+
+function handleLogout() {
+    localStorage.removeItem('finsight_session');
+    currentUser = null;
+    authToken = null;
+    document.getElementById('dashboard').classList.remove('active');
+    document.getElementById('authContainer').style.display = 'block';
+    showToast('👋 Signed out successfully', 'success');
+}
+
+// ============================================================
+// SESSION CHECK
+// ============================================================
+
+function checkSession() {
+    const session = localStorage.getItem('finsight_session');
+    if (session) {
+        try {
+            const data = JSON.parse(session);
+            if (data.expires > Date.now() && data.user) {
+                currentUser = data.user;
+                authToken = data.token;
+                showDashboard();
+                return true;
+            } else {
+                localStorage.removeItem('finsight_session');
+            }
+        } catch(e) {
+            localStorage.removeItem('finsight_session');
+        }
+    }
+    return false;
+}
+
+// ============================================================
+// DASHBOARD LOGIC
+// ============================================================
+
+function showDashboard() {
+    document.getElementById('authContainer').style.display = 'none';
+    document.getElementById('dashboard').classList.add('active');
+    
+    // Update user badge
+    if (currentUser) {
+        document.getElementById('userName').textContent = currentUser.name;
+        document.getElementById('userAvatar').textContent = currentUser.name.charAt(0).toUpperCase();
+        document.getElementById('userRole').textContent = currentUser.role.charAt(0).toUpperCase() + currentUser.role.slice(1);
+    }
+    
+    // Initialize dashboard data
+    initializeDashboard();
+}
+
+// ============================================================
+// DASHBOARD STATE & FUNCTIONS
+// ============================================================
+
+const dashboardState = {
     balance: 0,
     ebitda: 253110.25,
     income: 455770.88,
@@ -737,14 +975,12 @@ const state = {
     monthsLeft: 0,
     cashOutDate: '--',
     scenario: 'base',
-    currentTxType: 'inflow',
     accounts: [
         { name: 'M-Pesa B2C', balance: 412500 },
         { name: 'KCB Corporate', balance: 518400 },
         { name: 'PayPal Transit', balance: 198200 },
         { name: 'Local Ledger', balance: 101240 }
     ],
-    transactions: [],
     forecast: [
         { week: 1, amount: 142000 },
         { week: 2, amount: 89000 },
@@ -755,303 +991,80 @@ const state = {
         { tier: 'Starter', total: 120500 },
         { tier: 'Growth', total: 245000 },
         { tier: 'Enterprise', total: 90270 }
-    ],
-    deleteTarget: null,
-    deleteType: null
+    ]
 };
 
-// ============================================================
-// PERSISTENCE
-// ============================================================
-function saveState() {
-    try { localStorage.setItem('finsight_pro_v5', JSON.stringify(state)); } catch(e) {}
-}
-
-function loadState() {
-    try {
-        const saved = localStorage.getItem('finsight_pro_v5');
-        if (saved) {
-            Object.assign(state, JSON.parse(saved));
-            return true;
-        }
-    } catch(e) {}
-    return false;
-}
-
-// ============================================================
-// CORE LOGIC
-// ============================================================
-function calculateFinancialMetrics() {
-    state.balance = state.accounts.reduce((sum, acc) => sum + acc.balance, 0);
-    
-    if (state.outcome > 0) {
-        state.monthsLeft = Math.max(1, Math.round(state.balance / state.outcome));
-    } else {
-        state.monthsLeft = 24;
-    }
-
+function calculateMetrics() {
+    dashboardState.balance = dashboardState.accounts.reduce((sum, acc) => sum + acc.balance, 0);
+    dashboardState.monthsLeft = dashboardState.outcome > 0 ? Math.max(1, Math.round(dashboardState.balance / dashboardState.outcome)) : 24;
     const projectDate = new Date();
-    projectDate.setMonth(projectDate.getMonth() + state.monthsLeft);
-    state.cashOutDate = projectDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
-    
-    state.riskAmount = Math.round(state.balance * 1.08 + Math.random() * 50000);
-    state.ebitda = Math.round(state.income * 0.55 - state.outcome * 0.45);
+    projectDate.setMonth(projectDate.getMonth() + dashboardState.monthsLeft);
+    dashboardState.cashOutDate = projectDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+    dashboardState.riskAmount = Math.round(dashboardState.balance * 1.08 + Math.random() * 50000);
+    dashboardState.ebitda = Math.round(dashboardState.income * 0.55 - dashboardState.outcome * 0.45);
 }
 
-function generateAIInsight() {
-    const margin = state.income - state.outcome;
-    const net = state.balance;
-    const txCount = state.transactions.length;
-    
-    if (margin < 0) {
-        return `⚠️ Negative net margin of KSh ${Math.abs(Math.round(margin)).toLocaleString()}. Runway at ${state.monthsLeft} months. Consider cost optimization or revenue acceleration.`;
-    }
-    
-    if (net < 100000) {
-        return `⚠️ Low balance (KSh ${net.toLocaleString()}). Runway: ${state.monthsLeft} months. Review discretionary spending.`;
-    }
-    
-    if (state.monthsLeft < 6) {
-        return `⚠️ Runway below 6 months (${state.monthsLeft}). Urgent capital injection or expense reduction needed.`;
-    }
-    
-    let insight = `✅ Healthy runway of ${state.monthsLeft} months. Income exceeds outcome by KSh ${Math.round(margin).toLocaleString()}. Growth at ${state.growthRate.toFixed(1)}% MoM.`;
-    
-    if (txCount > 0) {
-        insight += ` Last ${txCount} transactions logged.`;
-    }
-    
-    return insight;
-}
+function updateDashboardUI() {
+    document.getElementById('totalBalance').textContent = `KSh ${Math.round(dashboardState.balance).toLocaleString()}`;
+    document.getElementById('ebitda').textContent = `KSh ${Math.round(dashboardState.ebitda).toLocaleString()}`;
+    document.getElementById('income').textContent = `KSh ${Math.round(dashboardState.income).toLocaleString()}`;
+    document.getElementById('outcome').textContent = `- KSh ${Math.round(dashboardState.outcome).toLocaleString()}`;
+    document.getElementById('growthRate').textContent = `${dashboardState.growthRate.toFixed(2)}%`;
+    document.getElementById('riskAmount').textContent = `KSh ${Math.round(dashboardState.riskAmount).toLocaleString()}`;
+    document.getElementById('newUsers').textContent = dashboardState.newUsers.toLocaleString();
+    document.getElementById('userChange').textContent = `▲ ${dashboardState.userGrowth.toFixed(1)}%`;
+    document.getElementById('cashOutDate').textContent = dashboardState.cashOutDate;
+    document.getElementById('monthsLeft').textContent = `~${dashboardState.monthsLeft} mo`;
 
-// ============================================================
-// DELETE LOGIC
-// ============================================================
-function showDeleteModal(message, target, type) {
-    state.deleteTarget = target;
-    state.deleteType = type;
-    document.getElementById('deleteMsg').textContent = message;
-    document.getElementById('deleteModal').classList.add('active');
-}
-
-function closeDeleteModal() {
-    document.getElementById('deleteModal').classList.remove('active');
-    state.deleteTarget = null;
-    state.deleteType = null;
-}
-
-function confirmDelete() {
-    if (state.deleteType === 'account') {
-        deleteAccountConfirm(state.deleteTarget);
-    } else if (state.deleteType === 'transaction') {
-        deleteTransactionConfirm(state.deleteTarget);
-    } else if (state.deleteType === 'mrr') {
-        deleteMRRConfirm(state.deleteTarget);
-    }
-    closeDeleteModal();
-}
-
-// Account Delete
-function deleteAccount() {
-    if (state.accounts.length <= 1) {
-        showToast('❌ Cannot delete last account');
-        return;
-    }
-    // Show account selection
-    const names = state.accounts.map((a, i) => `${i+1}. ${a.name}`).join('\n');
-    const choice = prompt(`Select account to delete (enter number):\n${names}`);
-    if (choice) {
-        const idx = parseInt(choice) - 1;
-        if (idx >= 0 && idx < state.accounts.length) {
-            showDeleteModal(`Delete account "${state.accounts[idx].name}"? This will remove it and all its balance.`, idx, 'account');
-        } else {
-            showToast('❌ Invalid selection');
-        }
-    }
-}
-
-function deleteAccountConfirm(idx) {
-    const removed = state.accounts.splice(idx, 1)[0];
-    calculateFinancialMetrics();
-    saveState();
-    updateUI();
-    showToast(`🗑️ Deleted account: ${removed.name}`);
-}
-
-// Transaction Delete
-function deleteTransaction(index) {
-    showDeleteModal(`Delete transaction "${state.transactions[index].memo}"?`, index, 'transaction');
-}
-
-function deleteTransactionConfirm(index) {
-    const tx = state.transactions.splice(index, 1)[0];
-    // Reverse the transaction effect
-    if (tx.type === 'inflow') {
-        state.income -= tx.amount;
-        state.ebitda -= Math.round(tx.amount * 0.75);
-        // Find and update account
-        const acc = state.accounts.find(a => a.name === tx.account);
-        if (acc) acc.balance -= tx.amount;
-    } else {
-        state.outcome -= tx.amount;
-        state.ebitda += Math.round(tx.amount * 0.85);
-        const acc = state.accounts.find(a => a.name === tx.account);
-        if (acc) acc.balance += tx.amount;
-    }
-    calculateFinancialMetrics();
-    saveState();
-    updateUI();
-    showToast(`🗑️ Deleted transaction: ${tx.memo}`);
-}
-
-// Clear all transactions
-function clearTransactions() {
-    if (state.transactions.length === 0) {
-        showToast('No transactions to clear');
-        return;
-    }
-    if (confirm(`Delete all ${state.transactions.length} transactions? This cannot be undone.`)) {
-        // Reverse all transactions
-        state.transactions.forEach(tx => {
-            if (tx.type === 'inflow') {
-                state.income -= tx.amount;
-                const acc = state.accounts.find(a => a.name === tx.account);
-                if (acc) acc.balance -= tx.amount;
-            } else {
-                state.outcome -= tx.amount;
-                const acc = state.accounts.find(a => a.name === tx.account);
-                if (acc) acc.balance += tx.amount;
-            }
-        });
-        state.transactions = [];
-        calculateFinancialMetrics();
-        saveState();
-        updateUI();
-        showToast('🗑️ All transactions cleared');
-    }
-}
-
-// MRR Delete
-function deleteMRR() {
-    if (state.mrrTiers.length <= 1) {
-        showToast('❌ Cannot delete last MRR tier');
-        return;
-    }
-    const names = state.mrrTiers.map((t, i) => `${i+1}. ${t.tier} (KSh ${t.total.toLocaleString()})`).join('\n');
-    const choice = prompt(`Select MRR tier to delete (enter number):\n${names}`);
-    if (choice) {
-        const idx = parseInt(choice) - 1;
-        if (idx >= 0 && idx < state.mrrTiers.length) {
-            showDeleteModal(`Delete MRR tier "${state.mrrTiers[idx].tier}"?`, idx, 'mrr');
-        } else {
-            showToast('❌ Invalid selection');
-        }
-    }
-}
-
-function deleteMRRConfirm(idx) {
-    const removed = state.mrrTiers.splice(idx, 1)[0];
-    saveState();
-    updateUI();
-    showToast(`🗑️ Deleted MRR tier: ${removed.tier}`);
-}
-
-// Clear all data
-function clearAllData() {
-    if (confirm('⚠️ Delete ALL data? This will reset the entire app. This cannot be undone!')) {
-        if (confirm('Are you absolutely sure?')) {
-            localStorage.removeItem('finsight_pro_v5');
-            location.reload();
-        }
-    }
-}
-
-// ============================================================
-// TRANSACTION ENGINE
-// ============================================================
-function toggleModal(show) {
-    const modal = document.getElementById('inputModal');
-    if (show) {
-        const select = document.getElementById('txAccount');
-        select.innerHTML = '';
-        state.accounts.forEach((acc, idx) => {
-            select.innerHTML += `<option value="${idx}">${acc.name} (KSh ${acc.balance.toLocaleString()})</option>`;
-        });
-        document.getElementById('txAmount').value = '';
-        document.getElementById('txMemo').value = '';
-        setTxType('inflow');
-        modal.classList.add('active');
-    } else {
-        modal.classList.remove('active');
-    }
-}
-
-function setTxType(type) {
-    state.currentTxType = type;
-    document.querySelectorAll('.radio-btn').forEach(btn => {
-        btn.classList.toggle('selected', btn.dataset.type === type);
+    // Accounts
+    const accountContainer = document.getElementById('accountList');
+    accountContainer.innerHTML = '';
+    dashboardState.accounts.forEach(acc => {
+        const chip = document.createElement('span');
+        chip.className = 'account-chip';
+        chip.innerHTML = `🏦 ${acc.name} <span class="bal">KSh ${Math.round(acc.balance).toLocaleString()}</span>`;
+        accountContainer.appendChild(chip);
     });
+
+    // MRR
+    const mrrContainer = document.getElementById('mrrGrid');
+    mrrContainer.innerHTML = '';
+    dashboardState.mrrTiers.forEach(tier => {
+        const item = document.createElement('div');
+        item.className = 'mmr-item';
+        item.innerHTML = `<div class="tier-lbl">${tier.tier}</div><div class="val">KSh ${Math.round(tier.total).toLocaleString()}</div>`;
+        mrrContainer.appendChild(item);
+    });
+
+    // Forecast
+    const forecastEls = document.querySelectorAll('.forecast-item .amount');
+    let totalForecast = 0;
+    dashboardState.forecast.forEach((f, idx) => {
+        if (forecastEls[idx]) {
+            const factor = dashboardState.scenario === 'optimistic' ? 1.4 : (dashboardState.scenario === 'pessimistic' ? 0.6 : 1.0);
+            const amount = Math.round(f.amount * factor);
+            totalForecast += amount;
+            forecastEls[idx].textContent = `${amount >= 0 ? '+' : ''}KSh ${Math.round(amount/1000)}k`;
+            forecastEls[idx].style.color = amount >= 0 ? '#4ade80' : '#f87171';
+        }
+    });
+
+    const pct = Math.min(100, Math.max(15, 50 + (totalForecast / 6000)));
+    document.getElementById('forecastBar').style.width = `${pct}%`;
+
+    // Risk
+    const riskBox = document.getElementById('riskBox');
+    riskBox.className = dashboardState.riskAmount > dashboardState.balance ? 'risk-box' : 'risk-box safe';
 }
 
-function submitTransaction() {
-    const amtEl = document.getElementById('txAmount');
-    const accEl = document.getElementById('txAccount');
-    const memoEl = document.getElementById('txMemo');
-    
-    const val = parseFloat(amtEl.value);
-    const accIdx = parseInt(accEl.value);
-    const description = memoEl.value.trim() || 'Ledger adjustment';
-
-    if (isNaN(val) || val <= 0) {
-        showToast('❌ Please enter a valid amount');
-        return;
-    }
-
-    if (state.currentTxType === 'outflow' && state.accounts[accIdx].balance < val) {
-        showToast(`❌ Insufficient balance in ${state.accounts[accIdx].name}`);
-        return;
-    }
-
-    const tx = {
-        id: Date.now(),
-        type: state.currentTxType,
-        amount: val,
-        account: state.accounts[accIdx].name,
-        memo: description,
-        timestamp: new Date().toLocaleString()
-    };
-
-    if (state.currentTxType === 'inflow') {
-        state.accounts[accIdx].balance += val;
-        state.income += val;
-        state.ebitda += Math.round(val * 0.75);
-    } else {
-        state.accounts[accIdx].balance -= val;
-        state.outcome += val;
-        state.ebitda -= Math.round(val * 0.85);
-    }
-
-    state.transactions.unshift(tx);
-
-    // Update MRR tiers based on inflow
-    if (state.currentTxType === 'inflow' && val > 10000) {
-        state.mrrTiers[0].total += Math.round(val * 0.2);
-        state.mrrTiers[1].total += Math.round(val * 0.5);
-        state.mrrTiers[2].total += Math.round(val * 0.3);
-    }
-
-    calculateFinancialMetrics();
-    saveState();
-    updateUI();
-    toggleModal(false);
-    showToast(`✅ Posted ${state.currentTxType.toUpperCase()} of KSh ${val.toLocaleString()} to ${state.accounts[accIdx].name}`);
+function initializeDashboard() {
+    calculateMetrics();
+    updateDashboardUI();
+    document.getElementById('aiText').textContent = `Welcome back, ${currentUser.name}! Your runway is ${dashboardState.monthsLeft} months. Growth at ${dashboardState.growthRate.toFixed(1)}% MoM.`;
 }
 
-// ============================================================
-// SCENARIO ENGINE
-// ============================================================
 function applyScenario(scenario) {
-    state.scenario = scenario;
+    dashboardState.scenario = scenario;
     document.querySelectorAll('.scenario-badge').forEach(el => {
         el.classList.toggle('active', el.dataset.scenario === scenario);
     });
@@ -1063,29 +1076,21 @@ function applyScenario(scenario) {
     };
 
     const m = multipliers[scenario];
-    const baseIncome = 455770.88;
-    const baseOutcome = 367000.03;
-    
-    state.income = baseIncome * m.inc;
-    state.outcome = baseOutcome * m.out;
-    state.growthRate = 9.56 * m.gr;
-    state.newUsers = Math.round(14833 * m.us);
-    state.userGrowth = 30.3 * m.gr;
+    dashboardState.income = 455770.88 * m.inc;
+    dashboardState.outcome = 367000.03 * m.out;
+    dashboardState.growthRate = 9.56 * m.gr;
+    dashboardState.newUsers = Math.round(14833 * m.us);
+    dashboardState.userGrowth = 30.3 * m.gr;
+    dashboardState.accounts[0].balance = Math.round(412500 * m.inc);
+    dashboardState.accounts[1].balance = Math.round(518400 * m.inc * 0.9);
+    dashboardState.accounts[2].balance = Math.round(198200 * (1 / m.out));
+    dashboardState.accounts[3].balance = Math.round(101240 * m.inc);
 
-    state.accounts[0].balance = Math.round(412500 * m.inc);
-    state.accounts[1].balance = Math.round(518400 * m.inc * 0.9);
-    state.accounts[2].balance = Math.round(198200 * (1 / m.out));
-    state.accounts[3].balance = Math.round(101240 * m.inc);
-
-    calculateFinancialMetrics();
-    saveState();
-    updateUI();
-    showToast(`📊 Scenario: ${scenario.toUpperCase()}`);
+    calculateMetrics();
+    updateDashboardUI();
+    showToast(`📊 Scenario: ${scenario.toUpperCase()}`, 'success');
 }
 
-// ============================================================
-// SHORTCUT ACTIONS
-// ============================================================
 function quickTransfer(target, defaultAmount) {
     let amount = defaultAmount;
     if (amount === 0) {
@@ -1093,160 +1098,52 @@ function quickTransfer(target, defaultAmount) {
         if (!res) return;
         amount = parseFloat(res);
     }
-
     if (isNaN(amount) || amount <= 0) {
-        showToast('❌ Invalid amount');
+        showToast('❌ Invalid amount', 'error');
         return;
     }
-
-    if (state.accounts[0].balance >= amount) {
-        state.accounts[0].balance -= amount;
-        state.outcome += amount;
-        state.transactions.unshift({
-            id: Date.now(),
-            type: 'outflow',
-            amount: amount,
-            account: state.accounts[0].name,
-            memo: `Transfer to ${target}`,
-            timestamp: new Date().toLocaleString()
-        });
-        calculateFinancialMetrics();
-        saveState();
-        updateUI();
-        showToast(`✅ KSh ${amount.toLocaleString()} sent to ${target}`);
+    if (dashboardState.accounts[0].balance >= amount) {
+        dashboardState.accounts[0].balance -= amount;
+        dashboardState.outcome += amount;
+        calculateMetrics();
+        updateDashboardUI();
+        showToast(`✅ KSh ${amount.toLocaleString()} sent to ${target}`, 'success');
     } else {
-        showToast('❌ Insufficient balance in M-Pesa account');
+        showToast('❌ Insufficient balance', 'error');
     }
-}
-
-// ============================================================
-// UI RENDER
-// ============================================================
-function updateUI() {
-    document.getElementById('totalBalance').textContent = `KSh ${Math.round(state.balance).toLocaleString()}`;
-    document.getElementById('ebitda').textContent = `KSh ${Math.round(state.ebitda).toLocaleString()}`;
-    document.getElementById('income').textContent = `KSh ${Math.round(state.income).toLocaleString()}`;
-    document.getElementById('outcome').textContent = `- KSh ${Math.round(state.outcome).toLocaleString()}`;
-    document.getElementById('growthRate').textContent = `${state.growthRate.toFixed(2)}%`;
-    document.getElementById('riskAmount').textContent = `KSh ${Math.round(state.riskAmount).toLocaleString()}`;
-    document.getElementById('newUsers').textContent = state.newUsers.toLocaleString();
-    document.getElementById('userChange').textContent = `▲ ${state.userGrowth.toFixed(1)}%`;
-    document.getElementById('cashOutDate').textContent = `Runway End: ${state.cashOutDate}`;
-    document.getElementById('monthsLeft').textContent = `~${state.monthsLeft} mo`;
-
-    // Accounts
-    const accountContainer = document.getElementById('accountList');
-    accountContainer.innerHTML = '';
-    state.accounts.forEach((acc, idx) => {
-        const chip = document.createElement('span');
-        chip.className = 'account-chip';
-        chip.innerHTML = `🏦 ${acc.name} <span class="bal">KSh ${Math.round(acc.balance).toLocaleString()}</span>`;
-        accountContainer.appendChild(chip);
-    });
-
-    // Transactions
-    const txContainer = document.getElementById('txHistory');
-    txContainer.innerHTML = '';
-    if (state.transactions.length === 0) {
-        txContainer.innerHTML = '<div style="text-align:center;color:#475569;padding:12px;font-size:13px;">No transactions logged yet</div>';
-    } else {
-        state.transactions.slice(0, 20).forEach((tx, idx) => {
-            const div = document.createElement('div');
-            div.className = 'tx-item';
-            div.innerHTML = `
-                <div class="tx-info">
-                    <span style="font-size:13px;font-weight:500;">${tx.memo}</span>
-                    <span class="tx-account">${tx.account} · ${tx.timestamp}</span>
-                </div>
-                <div style="display:flex;align-items:center;gap:8px;">
-                    <span class="tx-amount ${tx.type}">${tx.type === 'inflow' ? '+' : '-'} KSh ${Math.round(tx.amount).toLocaleString()}</span>
-                    <button class="btn-icon" onclick="deleteTransaction(${idx})" style="width:20px;height:20px;font-size:10px;">✕</button>
-                </div>
-            `;
-            txContainer.appendChild(div);
-        });
-    }
-
-    // MRR
-    const mrrContainer = document.getElementById('mrrGrid');
-    mrrContainer.innerHTML = '';
-    state.mrrTiers.forEach((tier, idx) => {
-        const item = document.createElement('div');
-        item.className = 'mmr-item';
-        item.innerHTML = `
-            <div class="tier-lbl">${tier.tier}</div>
-            <div class="val">KSh ${Math.round(tier.total).toLocaleString()}</div>
-            <button class="delete-mmr" onclick="deleteMRR()" title="Delete this tier">✕</button>
-        `;
-        mrrContainer.appendChild(item);
-    });
-
-    // Forecast
-    const forecastEls = document.querySelectorAll('.forecast-item .amount');
-    let totalForecast = 0;
-    state.forecast.forEach((f, idx) => {
-        if (forecastEls[idx]) {
-            const factor = state.scenario === 'optimistic' ? 1.4 : (state.scenario === 'pessimistic' ? 0.6 : 1.0);
-            const amount = Math.round(f.amount * factor);
-            totalForecast += amount;
-            forecastEls[idx].textContent = `${amount >= 0 ? '+' : ''}KSh ${Math.round(amount/1000)}k`;
-            forecastEls[idx].style.color = amount >= 0 ? '#4ade80' : '#f87171';
-        }
-    });
-
-    // Progress bar
-    const pct = Math.min(100, Math.max(15, 50 + (totalForecast / 6000)));
-    document.getElementById('forecastBar').style.width = `${pct}%`;
-
-    // Risk box
-    const riskBox = document.getElementById('riskBox');
-    if (state.riskAmount > state.balance) {
-        riskBox.className = 'risk-box';
-    } else {
-        riskBox.className = 'risk-box safe';
-    }
-
-    // AI insight
-    document.getElementById('aiText').textContent = generateAIInsight();
 }
 
 // ============================================================
 // TOAST
 // ============================================================
-function showToast(msg) {
+
+function showToast(message, type = 'info') {
     const toast = document.getElementById('toast');
-    toast.textContent = msg;
+    toast.textContent = message;
+    toast.className = 'toast';
+    if (type === 'success') toast.classList.add('success');
+    if (type === 'error') toast.classList.add('error');
     toast.classList.add('show');
     clearTimeout(toast._timeout);
     toast._timeout = setTimeout(() => toast.classList.remove('show'), 3500);
 }
 
 // ============================================================
-// AUTO REFRESH
-// ============================================================
-function autoRefresh() {
-    const variance = 1 + (Math.random() * 0.002 - 0.001);
-    state.accounts.forEach(acc => acc.balance = Math.round(acc.balance * variance));
-    calculateFinancialMetrics();
-    updateUI();
-}
-
-// ============================================================
 // INIT
 // ============================================================
-if (!loadState()) {
-    // Add some sample transactions
-    state.transactions = [
-        { id: 1, type: 'inflow', amount: 150000, account: 'M-Pesa B2C', memo: 'Client Payment - Invoice #123', timestamp: '2024-01-15 10:30' },
-        { id: 2, type: 'outflow', amount: 45000, account: 'KCB Corporate', memo: 'Vendor Payment - Supplies', timestamp: '2024-01-14 14:20' },
-        { id: 3, type: 'inflow', amount: 75000, account: 'PayPal Transit', memo: 'Subscription Revenue - Q1', timestamp: '2024-01-13 09:15' }
-    ];
-    calculateFinancialMetrics();
-}
-updateUI();
 
-setInterval(autoRefresh, 15000);
-window.addEventListener('beforeunload', saveState);
+// Check for existing session
+if (!checkSession()) {
+    document.getElementById('authContainer').style.display = 'block';
+    document.getElementById('dashboard').classList.remove('active');
+}
+
+// Pre-fill demo credentials
+document.getElementById('loginEmail').value = 'demo@finsight.com';
+document.getElementById('loginPassword').value = 'Demo@123';
+
+console.log('🔐 FinSight Pro · Secure Authentication System');
+console.log('👤 Demo: demo@finsight.com / Demo@123');
 
 // Service Worker
 if ('serviceWorker' in navigator) {
@@ -1260,9 +1157,6 @@ if ('serviceWorker' in navigator) {
         });
     `)).catch(() => {});
 }
-
-console.log('🧠 FinSight Pro v5 · Ultra Logic Engine with Delete Logic');
-console.log('📊 Current State:', state);
 </script>
 </body>
 </html>
